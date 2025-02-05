@@ -7,6 +7,12 @@
 |
 */
 
-import router from '@adonisjs/core/services/router'
+import Route from '@adonisjs/core/services/router'
 
-router.on('/').render('pages/home')
+Route.post('/register', 'AuthController.register')
+Route.post('/login', 'AuthController.login')
+
+Route.group(() => {
+  Route.resource('/decks', 'DecksController').apiOnly().middleware('auth')
+  Route.resource('/flashcards', 'FlashcardsController').apiOnly().middleware('auth')
+}).prefix('/api')
