@@ -1,7 +1,7 @@
 import type { HttpContext } from '@adonisjs/core/http'
 
 import User from 'App/Models/User'
-import Hash from '@adonis/core/hash'
+import Hash from '@adonis/core/hash' //All of these are wrong i odn't know why
 
 export default class AuthController {
   // Inscription d'un utilisateur
