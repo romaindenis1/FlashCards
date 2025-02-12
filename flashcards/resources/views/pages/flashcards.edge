@@ -1,14 +1,55 @@
-@extends('layouts.app')
-
-  @section('title', 'Flashcards')
-
-    @section('content')
-      <main>
-        <h1>
-          Flashcards
-        </h1>
-        <p>
-          Welcome to the Flashcards page!
-        </p>
-      </main>
-    @endsection
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>
+      Flashcards
+    </title>
+  </head>
+  <body>
+    <h1>
+      Sample Deck
+    </h1>
+    <div>
+      @each(card in [{ id: 1, question: "What is 2+2?", answer: "4" }, { id: 2, question: "What is the capital of France?", answer: "Paris" }])
+        <div style="border: 1px solid #000; padding: 20px; cursor: pointer;">
+          <p id="question_{{ card.id }}">
+            {{ card.question }}
+          </p>
+          <p id="answer_{{ card.id }}" style="display: none;">
+            {{ card.answer }}
+          </p>
+          <button
+            onclick="const answerElement = document.getElementById('answer_{{ card.id }}');
+          answerElement.style.display = answerElement.style.display === 'block' ? 'none' : 'block';"
+          >Toggle Answer</button>
+        </div>
+      @endeach
+    </div>
+  </body>
+</html>
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>
+      Flashcards
+    </title>
+  </head>
+  <body>
+    <h1>
+      Flashcards
+    </h1>
+    <div>
+      @each(card in cards)
+        <div style="border: 1px solid #000; padding: 20px; cursor: pointer;">
+          <p id="question_{{ card.id }}">
+            {{ card.question }}
+          </p>
+          <p id="answer_{{ card.id }}" style="display: none;">
+            {{ card.answer }}
+          </p>
+          <button onclick="document.getElementById('answer_{{ card.id }}').style.display = 'block'">Toggle Answer</button>
+        </div>
+      @endeach
+    </div>
+  </body>
+</html>

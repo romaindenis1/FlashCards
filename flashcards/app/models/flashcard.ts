@@ -1,17 +1,19 @@
-import { DateTime } from 'luxon'
-import { BaseModel, column } from '@adonisjs/lucid/orm'
+import { BaseModel, column, belongsTo, BelongsTo } from '@adonisjs/lucid/orm'
+import Deck from '#models/deck'
 
 export default class Flashcard extends BaseModel {
   @column({ isPrimary: true })
-  declare id: number
+  public id!: number
 
-  @column.dateTime({ autoCreate: true })
-  declare createdAt: DateTime
-
-  @column.dateTime({ autoCreate: true, autoUpdate: true })
-  declare updatedAt: DateTime
-
-  // New deckId column
   @column()
-  declare deck_id: number
+  public question!: string
+
+  @column()
+  public answer!: string
+
+  @column()
+  public deck_id!: number
+
+  @belongsTo(() => Deck)
+  public deck!: BelongsTo<typeof Deck>
 }

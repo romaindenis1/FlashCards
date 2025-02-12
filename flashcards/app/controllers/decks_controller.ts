@@ -1,35 +1,63 @@
 import type { HttpContext } from '@adonisjs/core/http'
-
 import Deck from '#models/deck'
 
 export default class DecksController {
-  // Récupérer les decks de l'utilisateur connecté
-  public async index({ auth }: HttpContext) {
-    return await Deck.query().where('user_id', auth.user!.id)
+  public async index({ auth, response, view }: HttpContext) {
+    const user = auth.user ?? { id: 0 }
+    if (!user) {
+      throw new Error('User not authenticated')
+    }
+    if (!user) {
+      return response.unauthorized({ error: 'User not authenticated' })
+    }
+    if (!user) {
+      return response.unauthorized({ error: 'User not authenticated' })
+    }
+    if (!user) {
+      return response.unauthorized({ error: 'User not authenticated' })
+    }
+    const decks = await Deck.query().where('userId', user.id)
+    return view.render('pages/my_decks', { decks })
   }
 
-  // Créer un nouveau deck
-  public async store({ request, auth }: HttpContext) {
-    const data = request.only(['title'])
-    return await Deck.create({ ...data, user_id: auth.user!.id })
+  public async create({ view }: HttpContext) {
+    return view.render('pages/new_deck')
   }
 
-  // Récupérer un deck spécifique
-  public async show({ params }: HttpContext) {
-    return await Deck.findOrFail(params.id)
+  public async store({ request, response, auth, session }: HttpContext) {
+    const user = auth.user
+    const { title: name, description } = request.only(['title', 'description'])
+
+    if (!name || name.length < 3) {
+      session.flash({ error: 'Le titre doit contenir au moins 3 caractères.' })
+      return response.redirect().back()
+    }
+
+    const existingDeck = await Deck.query().where('userId', user.id).where('title', name).first()
+    if (existingDeck) {
+      session.flash({ error: 'Ce deck existe déjà.' })
+      return response.redirect().back()
+    }
+
+    await Deck.create({ title: name, description, user_id: user.id })
+    return response.redirect('/pages/my_decks')
   }
 
-  // Mettre à jour un deck
-  public async update({ params, request }: HttpContext) {
+  public async edit({ params, view }: HttpContext) {
+    const deck = await Deck.find(params.id)
+    return view.render('pages/edit_deck', { deck })
+  }
+
+  public async update({ params, request, response }: HttpContext) {
     const deck = await Deck.findOrFail(params.id)
-    deck.merge(request.only(['title']))
+    deck.merge(request.only(['title', 'description']))
     await deck.save()
-    return deck
+    return response.redirect('/pages/my_decks')
   }
 
-  // Supprimer un deck
-  public async destroy({ params }: HttpContext) {
+  public async destroy({ params, response }: HttpContext) {
     const deck = await Deck.findOrFail(params.id)
     await deck.delete()
+    return response.redirect('/pages/my_decks')
   }
 }
