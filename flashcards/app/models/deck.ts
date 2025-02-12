@@ -1,10 +1,16 @@
 import { DateTime } from 'luxon'
-import User from './user.js'
-import { BaseModel, column, belongsTo, BelongsTo } from '@adonisjs/lucid/orm'
+import { BaseModel, column, belongsTo } from '@adonisjs/lucid/orm'
+import User from '#models/user' // Ensure this import is correct
 
 export default class Deck extends BaseModel {
   @column({ isPrimary: true })
   declare id: number
+
+  @column()
+  declare title: string
+
+  @column()
+  declare user_id: number
 
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
@@ -12,9 +18,7 @@ export default class Deck extends BaseModel {
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime
 
-  @column()
-  public user_id: number // Assure-toi que cette ligne est présente
-
+  // Correctly defining the belongsTo relationship
   @belongsTo(() => User)
-  public user: BelongsTo<typeof User>
+  declare user: ReturnType<typeof belongsTo>
 }

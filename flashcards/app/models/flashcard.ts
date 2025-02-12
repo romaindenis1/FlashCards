@@ -10,4 +10,8 @@ export default class Flashcard extends BaseModel {
 
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime
+
+  // New deckId column
+  @column()
+  declare deck_id: number
 }

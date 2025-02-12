@@ -1,13 +1,13 @@
 import type { HttpContext } from '@adonisjs/core/http'
 
 import User from '#models/user'
-import Hash from '@adonis/core/hash' //All of these are wrong i odn't know why
+import hash from '@adonisjs/core/services/hash' //All of these are wrong i odn't know why
 
 export default class AuthController {
   // Inscription d'un utilisateur
   public async register({ request, response }: HttpContext) {
     const data = request.only(['username', 'email', 'password'])
-    const user = await User.create({ ...data, password: await Hash.make(data.password) })
+    const user = await User.create({ ...data, password: await hash.make(data.password) })
     return response.created(user)
   }
 
@@ -16,7 +16,7 @@ export default class AuthController {
     const { email, password } = request.only(['email', 'password'])
     const user = await User.query().where('email', email).firstOrFail()
 
-    if (!(await Hash.verify(user.password, password))) {
+    if (!(await hash.verify(user.password, password))) {
       return response.unauthorized('Invalid credentials')
     }
 
