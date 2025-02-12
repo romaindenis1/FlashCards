@@ -36,7 +36,7 @@ export default class FlashcardsController {
       return response.redirect().back()
     }
 
-    await Flashcard.create({ question, answer, deckId: params.deck_id })
+    await Flashcard.create({ question, answer, deck_id: params.deck_id })
     return response.redirect(`/pages/deck/${params.deck_id}`)
   }
 
@@ -49,7 +49,7 @@ export default class FlashcardsController {
     const flashcard = await Flashcard.findOrFail(params.id)
     flashcard.merge(request.only(['question', 'answer']))
     await flashcard.save()
-    return response.redirect(`/pages/deck/${flashcard.deckId}`)
+    return response.redirect(`/pages/deck/${flashcard.deck_id}`)
   }
 
   public async destroy({ params, response }: HttpContext) {

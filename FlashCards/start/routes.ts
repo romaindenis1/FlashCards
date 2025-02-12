@@ -31,19 +31,19 @@ Route.post('/register', 'AuthController.register')
 Route.post('/login', 'AuthController.loginWithJwt')
 
 //Decks et flashcards
-Route.group(() => {
-  Route.get('/pages/my_decks', 'DecksController.index')
-  Route.get('/pages/deck/:id', 'FlashcardsController.index')
-  Route.get('/pages/deck/:id/edit', 'DecksController.edit')
-  Route.get('/pages/deck/:deck_id/new', 'FlashcardsController.create')
+//Route.group(() => {
+Route.get('/pages/my_decks', 'DecksController.index')
+Route.get('/pages/deck/:id', 'FlashcardsController.index')
+Route.get('/pages/deck/:id/edit', 'DecksController.edit')
+Route.get('/pages/deck/:deck_id/new', 'FlashcardsController.create')
 
-  Route.post('/decks', 'DecksController.store')
-  Route.post('/flashcards/:deck_id', 'FlashcardsController.store')
+Route.post('/decks', 'DecksController.store')
+Route.post('/flashcards/:deck_id', 'FlashcardsController.store')
 
-  Route.get('/flashcards/:id/edit', 'FlashcardsController.edit')
-  Route.put('/flashcards/:id', 'FlashcardsController.update')
-  Route.delete('/flashcards/:id', 'FlashcardsController.destroy')
+Route.get('/flashcards/:id/edit', 'FlashcardsController.edit')
+Route.put('/flashcards/:id', 'FlashcardsController.update')
+Route.delete('/flashcards/:id', 'FlashcardsController.destroy')
 
-  Route.put('/decks/:id', 'DecksController.update')
-  Route.delete('/decks/:id', 'DecksController.destroy')
-}).middleware('auth')
+Route.put('/decks/:id', 'DecksController.update')
+Route.delete('/decks/:id', 'DecksController.destroy')
+//}).middleware('auth') FOR LATER

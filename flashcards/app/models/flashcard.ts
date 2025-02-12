@@ -1,5 +1,5 @@
-import { BaseModel, column, belongsTo, BelongsTo } from '@adonisjs/lucid/orm'
-import Deck from '#models/deck'
+import { BaseModel, column, belongsTo } from '@adonisjs/lucid/orm'
+import Deck from './deck.js'
 
 export default class Flashcard extends BaseModel {
   @column({ isPrimary: true })
@@ -14,6 +14,7 @@ export default class Flashcard extends BaseModel {
   @column()
   public deck_id!: number
 
+  // Correctly set the belongsTo relationship with Deck
   @belongsTo(() => Deck)
-  public deck!: BelongsTo<typeof Deck>
+  public deck!: Deck // Directly typing this as Deck is enough, Adonis handles the internal type
 }
