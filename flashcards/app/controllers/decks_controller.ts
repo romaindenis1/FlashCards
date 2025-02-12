@@ -1,6 +1,6 @@
 import type { HttpContext } from '@adonisjs/core/http'
 
-import Deck from 'App/Models/Deck'
+import Deck from '#models/deck'
 
 export default class DecksController {
   // Récupérer les decks de l'utilisateur connecté

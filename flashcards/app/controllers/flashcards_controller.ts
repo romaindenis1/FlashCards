@@ -1,6 +1,6 @@
 import type { HttpContext } from '@adonisjs/core/http'
 
-import Flashcard from 'App/Models/Flashcard'
+import Flashcard from '#models/flashcard'
 
 export default class FlashcardsController {
   // Récupérer toutes les flashcards d'un deck

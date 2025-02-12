@@ -9,6 +9,10 @@
 
 import Route from '@adonisjs/core/services/router'
 
+Route.get('/', async ({ view }) => {
+  return view.render('pages/home')
+})
+
 Route.post('/register', 'AuthController.register')
 Route.post('/login', 'AuthController.login')
 

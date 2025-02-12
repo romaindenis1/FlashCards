@@ -1,0 +1,26 @@
+@extends('layouts.app')
+
+  @section('title', 'Connect')
+
+    @section('content')
+      <main>
+        <h1>
+          Connect
+        </h1>
+        <form action="/connect" method="POST">
+          <div>
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" required />
+          </div>
+          <div>
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required />
+          </div>
+          <div>
+            <label for="message">Message:</label>
+            <textarea id="message" name="message" required></textarea>
+          </div>
+          <button type="submit">Connect</button>
+        </form>
+      </main>
+    @endsection
