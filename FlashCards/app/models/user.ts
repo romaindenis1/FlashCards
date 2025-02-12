@@ -1,34 +1,30 @@
 import { DateTime } from 'luxon'
-import Hash from '@ioc:Adonis/Core/Hash'
-import { BaseModel, column, beforeSave, hasMany } from '@ioc:Adonis/Lucid/Orm'
-import Deck from './Deck'
+import hash from '@adonisjs/core/services/hash'
+import { compose } from '@adonisjs/core/helpers'
+import { BaseModel, column } from '@adonisjs/lucid/orm'
+import { withAuthFinder } from '@adonisjs/auth/mixins/lucid'
 
-export default class User extends BaseModel {
+const AuthFinder = withAuthFinder(() => hash.use('scrypt'), {
+  uids: ['email'],
+  passwordColumnName: 'password',
+})
+
+export default class User extends compose(BaseModel, AuthFinder) {
   @column({ isPrimary: true })
-  public id: number
+  declare id: number
 
   @column()
-  public username: string
+  declare fullName: string | null
 
   @column()
-  public email: string
+  declare email: string
 
   @column({ serializeAs: null })
-  public password: string
+  declare password: string
 
   @column.dateTime({ autoCreate: true })
-  public createdAt: DateTime
+  declare createdAt: DateTime
 
   @column.dateTime({ autoCreate: true, autoUpdate: true })
-  public updatedAt: DateTime
-
-  @beforeSave()
-  public static async hashPassword(user: User) {
-    if (user.$dirty.password) {
-      user.password = await Hash.make(user.password)
-    }
-  }
-
-  @hasMany(() => Deck)
-  public decks: Deck[]
+  declare updatedAt: DateTime | null
 }

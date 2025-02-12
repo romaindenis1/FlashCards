@@ -1,26 +1,21 @@
 import type { HttpContext } from '@adonisjs/core/http'
-
 import User from '#models/user'
-import hash from '@adonisjs/core/services/hash' //All of these are wrong i odn't know why
+import hash from '@adonisjs/core/services/hash'
+import jwt from 'jsonwebtoken'
 
 export default class AuthController {
-  // Inscription d'un utilisateur
-  public async register({ request, response }: HttpContext) {
-    const data = request.only(['username', 'email', 'password'])
-    const user = await User.create({ ...data, password: await hash.make(data.password) })
-    return response.created(user)
-  }
-
-  // Connexion et génération du token
-  public async login({ request, auth, response }: HttpContext) {
+  public async loginWithJwt({ request, response }: HttpContext) {
     const { email, password } = request.only(['email', 'password'])
-    const user = await User.query().where('email', email).firstOrFail()
+    const user = await User.findBy('email', email)
 
-    if (!(await hash.verify(user.password, password))) {
+    if (!user || !(await hash.verify(user.password, password))) {
       return response.unauthorized('Invalid credentials')
     }
 
-    const token = await auth.use('api').generate(user)
-    return response.ok({ token })
+    const token = jwt.sign({ id: user.id, email: user.email }, 'your_secret_key', {
+      expiresIn: '1h',
+    })
+
+    return response.json({ token })
   }
 }
