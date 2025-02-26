@@ -1,26 +1,31 @@
-@extends('layouts.app')
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+      Connect
+    </title>
+    @vite(['resources/css/login.css'])
+    @vite(['resources/css/app.css'])
 
-  @section('title', 'Connect')
-
-    @section('content')
-      <main>
-        <h1>
-          Connect
-        </h1>
-        <form action="/connect" method="POST">
-          <div>
-            <label for="username">Username:</label>
-            <input type="text" id="username" name="username" required />
-          </div>
-          <div>
-            <label for="email">Email:</label>
-            <input type="email" id="email" name="email" required />
-          </div>
-          <div>
-            <label for="message">Message:</label>
-            <textarea id="message" name="message" required></textarea>
-          </div>
-          <button type="submit">Connect</button>
-        </form>
-      </main>
-    @endsection
+  </head>
+  <body>
+    <main>
+      <h1>
+        Connect
+      </h1>
+      <form action="/connect" method="POST">
+        <div>
+          <label for="Username">Username:</label>
+          <input type="Username" id="Username" name="Username" required /></textarea>
+      </div>
+      <div>
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required /></textarea>
+    </div>
+    <button type="submit">Connect</button>
+  </form>
+</main>
+</body>
+</html>
