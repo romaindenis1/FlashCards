@@ -14,11 +14,11 @@ Route.get('/', async ({ view }: { view: any }) => {
   return view.render('pages/home')
 })
 
-Route.get('/pages/connect', async ({ view }: { view: any }) => {
+Route.get('/connect', async ({ view }: { view: any }) => {
   return view.render('pages/connect')
 })
 
-Route.get('/pages/register', async ({ view }: { view: any }) => {
+Route.get('/register', async ({ view }: { view: any }) => {
   return view.render('pages/register')
 })
 
@@ -27,8 +27,8 @@ Route.get('/pages/flashcards', async ({ view }: { view: any }) => {
 })
 
 //Authentication
-Route.post('/register', 'AuthController.register')
-Route.post('/login', 'AuthController.loginWithJwt')
+Route.post('/connect', 'AuthController.loginWithJwt')
+Route.post('/register', 'AuthController.connect')
 
 //Decks et flashcards
 //Route.group(() => {
