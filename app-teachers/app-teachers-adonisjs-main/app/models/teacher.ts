@@ -13,9 +13,6 @@ export default class Teacher extends BaseModel {
   declare gender: String
 
   @column()
-  declare firstname: String
-
-  @column()
   declare lastname: String
 
   @column()
@@ -23,12 +20,6 @@ export default class Teacher extends BaseModel {
 
   @column()
   declare origine: String
-
-  @column()
-  declare sectionId: number // Colonne correspondant à la clé étrangère
-
-  @belongsTo(() => Section)
-  public section: ReturnType<typeof belongsTo> // Relation vers le modèle Section
 
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime

@@ -25,3 +25,9 @@ import 'ts-node-maintained/register/esm'
  * Import ace console entrypoint
  */
 await import('./bin/console.js')
+
+/*
+nickname = description
+surnom = question
+orgine = reponse
+*/

@@ -9,8 +9,8 @@ export default class TeachersController {
    */
   async index({ view }: HttpContext) {
     //
-    // Récupérer la liste des enseignants triés par ordre alphabétique sur le nom et le prénom
-    const teachers = await Teacher.query().orderBy('lastname', 'asc').orderBy('firstname', 'asc')
+    // Récupérer la liste des enseignants triés par ordre alphabétique sur le nom
+    const teachers = await Teacher.query().orderBy('lastname', 'asc')
 
     // Appel de la vue
     return view.render('pages/home', { teachers })
@@ -20,12 +20,8 @@ export default class TeachersController {
    * Afficher le formulaire pour créer un nouvel enseignant
    */
   async create({ view }: HttpContext) {
-    //
-    // Récupération des sections triées par le nom
-    const sections = await Section.query().orderBy('name', 'asc')
-
     // Appel de la vue
-    return view.render('pages/teachers/create', { title: "Ajout d'un enseignant", sections })
+    return view.render('pages/teachers/create', { title: "Ajout d'un enseignant" })
   }
 
   /**
@@ -34,11 +30,10 @@ export default class TeachersController {
   async store({ request, session, response }: HttpContext) {
     //
     // Validation des données saisies par l'utilisateur
-    const { gender, firstname, lastname, nickname, origine, sectionId } =
-      await request.validateUsing(teacherValidator)
+    const { gender, lastname, nickname, origine } = await request.validateUsing(teacherValidator)
 
     // Création du nouvel enseignant
-    await Teacher.create({ gender, firstname, lastname, nickname, origine, sectionId })
+    await Teacher.create({ gender, lastname, nickname, origine })
 
     // Afficher un message à l'utilisateur
     session.flash('success', 'Le nouvel enseignant a été ajouté avec succès !')
@@ -53,7 +48,7 @@ export default class TeachersController {
   async show({ params, view }: HttpContext) {
     // Sélectionner l'enseignant dont on veut afficher les détails
     // On veut également pouvoir afficher la section de l'enseignant
-    const teacher = await Teacher.query().where('id', params.id).preload('section').firstOrFail()
+    const teacher = await Teacher.findOrFail(params.id)
 
     // Afficher la vue
     return view.render('pages/teachers/show.edge', { title: "Détail d'un enseignant", teacher })
@@ -82,8 +77,7 @@ export default class TeachersController {
    */
   async update({ params, request, session, response }: HttpContext) {
     // Validation des données saisies par l'utilisateur
-    const { gender, firstname, lastname, nickname, origine, sectionId } =
-      await request.validateUsing(teacherValidator)
+    const { gender, lastname, nickname, origine } = await request.validateUsing(teacherValidator)
 
     // Sélectionner l'enseignant dont on veut mettre à jour des informations
     const teacher = await Teacher.findOrFail(params.id)
@@ -91,7 +85,7 @@ export default class TeachersController {
     // Si un enseignant correspond à l'id
     if (teacher) {
       // Met à jour les infos de l'enseignant
-      await teacher.merge({ gender, firstname, lastname, nickname, origine, sectionId }).save()
+      await teacher.merge({ gender, lastname, nickname, origine }).save()
     }
 
     // Afficher un message à l'utilisateur
