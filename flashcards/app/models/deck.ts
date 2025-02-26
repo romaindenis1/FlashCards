@@ -1,4 +1,4 @@
-import { BaseModel, column, belongsTo, hasMany, HasMany, BelongsTo } from '@adonisjs/lucid/orm'
+import { BaseModel, column, belongsTo, hasMany } from '@adonisjs/lucid/orm'
 import User from '#models/user'
 import Flashcard from '#models/flashcard'
 

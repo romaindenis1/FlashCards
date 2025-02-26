@@ -7,7 +7,6 @@ export default class UserSeeder extends BaseSeeder {
   public async run() {
     // Create a sample user
     const user = await User.create({
-      email: 'user@example.com',
       password: 'password123',
       username: 'sampleuser',
     })
