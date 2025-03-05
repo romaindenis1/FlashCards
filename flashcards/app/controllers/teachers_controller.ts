@@ -1,5 +1,6 @@
 import Section from '#models/section'
 import Teacher from '#models/teacher'
+import { loginUserValidator, registerUserValidator } from '#validators/auth'
 import { teacherValidator } from '#validators/teacher'
 import type { HttpContext } from '@adonisjs/core/http'
 
@@ -8,7 +9,6 @@ export default class TeachersController {
    * Afficher la liste des enseignants
    */
   async index({ view }: HttpContext) {
-    //
     // Récupérer la liste des enseignants triés par ordre alphabétique sur le nom
     const teachers = await Teacher.query().orderBy('lastname', 'asc')
 
@@ -28,12 +28,11 @@ export default class TeachersController {
    * Gérer la soumission du formulaire pour la création d'un enseignant
    */
   async store({ request, session, response }: HttpContext) {
-    //
     // Validation des données saisies par l'utilisateur
-    const { gender, lastname, nickname, origine } = await request.validateUsing(teacherValidator)
+    const { lastname, nickname, origine } = await request.validate(teacherValidator)
 
     // Création du nouvel enseignant
-    await Teacher.create({ gender, lastname, nickname, origine })
+    await Teacher.create({ lastname, nickname, origine })
 
     // Afficher un message à l'utilisateur
     session.flash('success', 'Le nouvel enseignant a été ajouté avec succès !')
@@ -51,7 +50,7 @@ export default class TeachersController {
     const teacher = await Teacher.findOrFail(params.id)
 
     // Afficher la vue
-    return view.render('pages/teachers/show.edge', { title: "Détail d'un enseignant", teacher })
+    return view.render('pages/teachers/show', { title: "Détail d'un enseignant", teacher })
   }
 
   /**
@@ -65,7 +64,7 @@ export default class TeachersController {
     const sections = await Section.query().orderBy('name', 'asc')
 
     // Afficher la vue
-    return view.render('pages/teachers/edit.edge', {
+    return view.render('pages/teachers/edit', {
       title: 'Modifier un enseignant',
       teacher,
       sections,
@@ -77,7 +76,7 @@ export default class TeachersController {
    */
   async update({ params, request, session, response }: HttpContext) {
     // Validation des données saisies par l'utilisateur
-    const { gender, lastname, nickname, origine } = await request.validateUsing(teacherValidator)
+    const { lastname, nickname, origine } = await request.validate(teacherValidator)
 
     // Sélectionner l'enseignant dont on veut mettre à jour des informations
     const teacher = await Teacher.findOrFail(params.id)
@@ -85,7 +84,7 @@ export default class TeachersController {
     // Si un enseignant correspond à l'id
     if (teacher) {
       // Met à jour les infos de l'enseignant
-      await teacher.merge({ gender, lastname, nickname, origine }).save()
+      await teacher.merge({ lastname, nickname, origine }).save()
     }
 
     // Afficher un message à l'utilisateur

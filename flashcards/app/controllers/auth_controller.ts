@@ -1,6 +1,7 @@
 import type { HttpContext } from '@adonisjs/core/http'
-import { loginUserValidator } from '#validators/auth'
+import { loginUserValidator, registerUserValidator } from '#validators/auth'
 import User from '#models/user'
+import Hash from '@adonisjs/core/services/hash'
 
 /**
  * Controller pour l'authentification
@@ -43,10 +44,37 @@ export default class AuthController {
   /**
    * Gérer l'inscription d'un utilisateur
    */
-  async handleRegister({ request, response, auth }: HttpContext) {
-    const { username, password } = request.all()
-    const user = await User.create({ username, password })
-    await auth.use('web').login(user)
-    return response.redirect().toRoute('home')
+  async handleRegister({ request, auth, session, response }: HttpContext) {
+    try {
+      // Validate user input
+      const payload = await request.validate({ schema: registerUserValidator })
+
+      // Check if the username already exists in the database before creating the user
+      const existingUser = await User.query().where('username', payload.username).first()
+
+      if (existingUser) {
+        // If the username already exists, flash an error and redirect to the register page
+        session.flash('error', "Le nom d'utilisateur existe déjà.")
+        return response.redirect().toRoute('register')
+      }
+
+      // Proceed to create the user only if the username does not exist
+      const user = await User.create({
+        username: payload.username,
+        password: payload.password,
+      })
+
+      // Log the user in after successful creation
+      await auth.use('web').login(user)
+
+      // Flash a success message and redirect to the home page
+      session.flash('success', "L'utilisateur s'est inscrit et connecté avec succès")
+      return response.redirect().toRoute('home')
+    } catch (error) {
+      // Catch unexpected errors and log them for debugging
+      console.error(error)
+      session.flash('error', "Une erreur est survenue lors de l'inscription.")
+      return response.redirect().toRoute('register')
+    }
   }
 }
