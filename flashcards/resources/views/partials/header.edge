@@ -26,13 +26,21 @@
           @endcomponent
           <button type="submit" class="btn btn-login">Se connecter</button>
         </form>
-        <form action="{{ route('auth.handleRegister') }}" method="post">
+        <form action="{{ route('auth.handleRegister') }}" method="post" id="registerForm">
           {{ csrfField() }}
-          @component('components/input', { name: 'username', label: "Nom d'utilisateur" })
+          @component('components/input', { name: 'username', label: "Nom d'utilisateur", id: 'username' })
           @endcomponent
-          @component('components/input', { name: 'password', label: 'Mot de passe', type: 'password' })
+          <div id="usernameError" class="error hidden">
+            Nom d'utilisateur déjà pris
+          </div>
+          @component('components/input', { name: 'password', label: 'Mot de passe', type: 'password', id: 'password' })
           @endcomponent
-          <button type="submit" class="btn btn-register">S'inscrire</button>
+          @component('components/input', { name: 'confirm_password', label: 'Confirmer le mot de passe', type: 'password', id: 'confirmPassword' })
+          @endcomponent
+          <div id="passwordError" class="error hidden">
+            Les mots de passe ne correspondent pas
+          </div>
+          <button type="submit" class="btn btn-register" id="submitButton">S'inscrire</button>
         </form>
       @endif
     </div>
@@ -43,3 +51,28 @@
     @endif
   </nav>
 </header>
+
+<script>
+  const registerForm = document.getElementById("registerForm");
+  
+  const passwordInput = document.getElementById("password");
+  
+  const confirmPasswordInput = document.getElementById("confirmPassword");
+  
+  const passwordError = document.getElementById("passwordError");
+  
+  function checkPasswordsMatch(event) {
+    const password = passwordInput.value;
+    const confirmPassword = confirmPasswordInput.value;
+    // Vérifie si les mots de passe correspondent
+    if (password !== confirmPassword) {
+      event.preventDefault(); // Prevent form submission
+      passwordError.classList.remove("hidden"); // Show error
+    } else {
+      passwordError.classList.add("hidden"); // Hide error
+    }
+  }
+  // Ajoute un écouteur d'événements au formulaire pour le soumettre
+  
+  registerForm.addEventListener("submit", checkPasswordsMatch);
+</script>

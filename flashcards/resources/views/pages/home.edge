@@ -17,7 +17,7 @@
       </tr>
     </thead>
     <tbody>
-      @each ((teacher, index) in teachers)
+      @each ((teacher, index) in teachers.sort((a, b) => a.id - b.id))
         <tr>
           <td>
             {{ teacher.lastname }}
