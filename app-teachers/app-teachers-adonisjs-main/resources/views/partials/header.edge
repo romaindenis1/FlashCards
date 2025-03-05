@@ -1,8 +1,13 @@
 <header>
   <div class="container-header">
+    <div class="logo-header">
+      <a href="{{ route('home') }}">
+        <img src="/img/logo.jpg" alt="Logo" class="logo" />
+      </a>
+    </div>
     <div class="titre-header">
       <h1>
-        Surnom des enseignants
+        Flashcards P_Bulle
       </h1>
     </div>
     <div class="login-container">
@@ -33,7 +38,6 @@
     </div>
   </div>
   <nav>
-    <a href="{{ route('home') }}">Accueil</a>&nbsp;
     @if(isAuthenticated)
       <a href="{{ route('teacher.create') }}">Ajouter un enseignant</a>
     @endif

@@ -3,14 +3,9 @@ body {
   margin: auto;
   width: 80%;
 }
-
-nav {
-  border: black solid 3px;
-  background-color: hsl(0, 0%, 90%);
-  height: 50px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.logo {
+  width: 50%;
+  height: auto;
 }
 
 .container {
