@@ -15,7 +15,7 @@ L'application utilise les versions suivantes des logiciels :
    Exécutez la commande suivante pour cloner le repository :
    ```
    git clone https://github.com/romaindenis1/FlashCards.git
-   cd ./FlashCards/src
+   cd ./FlashCards/flashcards/
    ```
 
 ## 2. Installer les dépendances
