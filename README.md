@@ -14,7 +14,7 @@ L'application utilise les versions suivantes des logiciels :
 1. **Cloner le repo**  
    Exécutez la commande suivante pour cloner le repository :
    ```
-   git clone https://github.com/romainschert/FlashCards.git
+   git clone https://github.com/romaindenis1/FlashCards.git
    cd ./FlashCards/src
    ```
 
