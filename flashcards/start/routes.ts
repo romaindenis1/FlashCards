@@ -62,10 +62,10 @@ router
   .as('auth.handleLogin')
   .use(middleware.guest())
 
+// Route permettant de gérer l'inscription
 router
   .post('/register', [AuthController, 'handleRegister'])
   .as('auth.handleRegister')
-  .use(middleware.guest())
 
 // Route permettant de se déconnecter
 router
