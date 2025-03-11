@@ -1,18 +1,18 @@
 import { BaseSchema } from '@adonisjs/lucid/schema'
 
-export default class extends BaseSchema {
+export default class CreateSectionsTable extends BaseSchema {
   protected tableName = 't_section'
 
-  async up() {
+  public async up() {
     this.schema.createTable(this.tableName, (table) => {
       table.increments('id')
       table.string('name').notNullable()
-      table.timestamp('created_at')
-      table.timestamp('updated_at')
+      table.string('description').notNullable()
+      table.timestamps(true)
     })
   }
 
-  async down() {
+  public async down() {
     this.schema.dropTable(this.tableName)
   }
 }
