@@ -9,17 +9,31 @@
 
 import AuthController from '#controllers/auth_controller'
 import TeachersController from '#controllers/teachers_controller'
+import SectionController from '#controllers/sections_controller'
 import router from '@adonisjs/core/services/router'
 import { middleware } from './kernel.js'
-
+import Section from '#models/section'
 // Route permettant d'accéder à la liste des enseignants (homepage)
-router.get('/', [TeachersController, 'index']).as('home')
+router
+  .get('/', async ({ view }) => {
+    // Fetch all sections and preload their teachers
+    const sections = await Section.query().preload('teachers').exec()
+
+    // Render the homepage view and pass sections to it
+    return view.render('pages/home', { sections })
+  })
+  .as('home')
 
 // Route permettant de voir les détails d'un enseignant
 router
   .get('/teacher/:id/show', [TeachersController, 'show'])
   .as('teacher.show')
   .use(middleware.auth())
+
+// Show section and first teacher
+router
+  .get('/section/:sectionId/teacher/:teacherIndex', 'SectionsController.show')
+  .as('section.show')
 
 // Route permettant d'afficher le formulaire permettant l'ajout d'un enseignant
 router
@@ -63,12 +77,12 @@ router
   .use(middleware.guest())
 
 // Route permettant de gérer l'inscription
-router
-  .post('/register', [AuthController, 'handleRegister'])
-  .as('auth.handleRegister')
+router.post('/register', [AuthController, 'handleRegister']).as('auth.handleRegister')
 
 // Route permettant de se déconnecter
 router
   .post('/logout', [AuthController, 'handleLogout'])
   .as('auth.handleLogout')
   .use(middleware.auth())
+
+router.get('/sections', [SectionController, 'index']).as('sections.index')

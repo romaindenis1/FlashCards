@@ -1,16 +1,17 @@
 import { BaseSeeder } from '@adonisjs/lucid/seeders'
 import Section from '#models/section'
+import { faker } from '@faker-js/faker'
 
-export default class extends BaseSeeder {
-  async run() {
-    // Création de sections
+export default class SectionSeeder extends BaseSeeder {
+  public async run() {
+    // Création de sections avec des données aléatoires
     await Section.createMany([
-      { id: 1, name: 'Informatique' },
-      { id: 2, name: 'Electronique' },
-      { id: 3, name: 'Automatique' },
-      { id: 4, name: 'Bois' },
-      { id: 5, name: 'Mécatronique' },
-      { id: 6, name: 'Polymécanique' },
+      { name: faker.commerce.department(), description: faker.lorem.sentence() },
+      { name: faker.commerce.department(), description: faker.lorem.sentence() },
+      { name: faker.commerce.department(), description: faker.lorem.sentence() },
+      { name: faker.commerce.department(), description: faker.lorem.sentence() },
+      { name: faker.commerce.department(), description: faker.lorem.sentence() },
+      { name: faker.commerce.department(), description: faker.lorem.sentence() },
     ])
   }
 }

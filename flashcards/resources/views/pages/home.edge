@@ -1,6 +1,6 @@
 @component('components/layout', { title: 'Accueil' })
   <h3>
-    Liste des flashcards
+    Liste des sections
   </h3>
   <table>
     <thead>
@@ -11,38 +11,19 @@
         <th>
           Description
         </th>
-        <th>
-          Options
-        </th>
       </tr>
     </thead>
     <tbody>
-      @each ((teacher, index) in teachers.sort((a, b) => a.id - b.id))
+      @each(section in sections)
         <tr>
           <td>
-            {{ teacher.lastname }}
+            {{ section.name }}
           </td>
           <td>
-            {{ teacher.nickname }}
-          </td>
-          <td class="containerOptions">
-            @if(isAuthenticated)
-              <a href="{{ route('teacher.edit', {id: teacher.id}) }}">
-                <img height="20em" src="/img/edit.png" alt="edit" />
-              </a>
-              <a
-                onClick="return confirm(`Voulez-vous vraiment supprimer l'enseignant {{ teacher.lastname }} ?`)"
-                href="{{ route('teacher.destroy', {id: teacher.id}) }}"
-              >
-                <img height="20em" src="/img/delete.png" alt="delete" />
-              </a>
-              <a href="{{ route('teacher.show', {id: teacher.id}) }}">
-                <img height="20em" src="/img/detail.png" alt="detail" />
-              </a>
-            @endif
+            {{ section.description }}
           </td>
         </tr>
-      @end
+      @endeach
     </tbody>
   </table>
 @endcomponent
