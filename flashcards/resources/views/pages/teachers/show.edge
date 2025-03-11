@@ -1,103 +1,45 @@
-@component('components/layout', { title: title })
-  <div class="card-navigation">
-    @if(teacher.id > 1)
-      <a href="{{ route('teacher.show', {id: teacher.id - 1}) }}" class="nav-arrow left-arrow">
-        &#9664;
-        <!-- Left arrow symbol -->
-      </a>
-    @endif
-    <div class="card-container">
-      <div class="card" id="flip-card">
-        <div class="card-front">
-          <h3>
-            {{ teacher.lastname }} //Question
-          </h3>
-        </div>
-        <div class="card-back">
+@component('components/layout', { title: section.name })
+  <div class="section-details">
+    <h3>
+      {{ section.name }}
+    </h3>
+    <p>
+      {{ section.description }}
+    </p>
+
+    <div class="teacher-navigation">
+      @if(currentTeacher)
+        <div class="teacher-card">
+          <h4>
+            {{ currentTeacher.name }}
+          </h4>
           <p>
-            {{ teacher.origine }} //Reponse
+            {{ currentTeacher.origine }}
           </p>
         </div>
-      </div>
+      @else
+        <p>
+          No teacher available for this section.
+        </p>
+      @endif
     </div>
-    <a href="{{ route('teacher.show', {id: teacher.id + 1}) }}" class="nav-arrow right-arrow">
-      &#9654;
-      <!-- Right arrow symbol -->
-    </a>
-  </div>
-  <div class="user-footer">
-    <a href="{{ route('home') }}">Retour à la page d'accueil</a>
-  </div>
 
-  <style>
-    .card-navigation {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      perspective: 1000px;
-    }
-    
-    .nav-arrow {
-      font-size: 2em;
-      text-decoration: none;
-      color: #000;
-      margin: 0 60px;
-      /* Increase margin to move arrows further away from the card */
-    }
-    
-    .card-container {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      perspective: 1000px;
-    }
-    
-    .card {
-      width: 300px;
-      height: 200px;
-      transition: transform 0.6s;
-      transform-style: preserve-3d;
-      position: relative;
-    }
-    
-    .card-front,
-    .card-back {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      backface-visibility: hidden;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border: 1px solid #ccc;
-      border-radius: 10px;
-      padding: 20px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    }
-    
-    .card-front {
-      background-color: #fff;
-    }
-    
-    .card-back {
-      background-color: #f8f8f8;
-      transform: rotateY(180deg);
-    }
-    
-    .card.flipped {
-      transform: rotateY(180deg);
-    }
-    
-    .user-footer {
-      text-align: center;
-      margin-top: 20px;
-    }
-  </style>
+    <div class="teacher-navigation-buttons">
+      @if(prevTeacherIndex !== teacherIndex)
+        <a href="{{ route('section.show', { sectionId: section.id, teacherIndex: prevTeacherIndex }) }}">
+          Previous Teacher
+        </a>
+      @endif
+      
+      @if(nextTeacherIndex !== teacherIndex)
+        <a href="{{ route('section.show', { sectionId: section.id, teacherIndex: nextTeacherIndex }) }}">
+          Next Teacher
+        </a>
+      @endif
+    </div>
 
-  <script>
-    document.getElementById("flip-card").addEventListener("click", function() {
-      this.classList.toggle("flipped");
-    });
-  </script>
+    <div class="user-footer">
+      <a href="{{ route('home') }}">Retour à la page d'accueil</a>
+    </div>
+  </div>
 @endcomponent

@@ -74,8 +74,12 @@ export default class AuthController {
       })
 
       // Log the user in after successful creation
-      await auth.use('web').login(user)
-
+      try {
+        await auth.use('web').login(user)
+      } catch (error) {
+        console.error(error)
+        return response.redirect().toRoute('home')
+      }
       // Flash a success message and redirect to the home page
       session.flash('success', "L'utilisateur s'est inscrit et connecté avec succès")
       return response.redirect().toRoute('home')

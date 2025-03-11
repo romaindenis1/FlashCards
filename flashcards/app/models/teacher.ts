@@ -3,7 +3,6 @@ import { BaseModel, column, belongsTo } from '@adonisjs/lucid/orm'
 import Section from '#models/section'
 
 export default class Teacher extends BaseModel {
-  // Renommer le nom de la table pour respecter les conventions de nommage de l'ETML
   public static table = 't_teacher'
 
   @column({ isPrimary: true })
