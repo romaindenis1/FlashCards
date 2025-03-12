@@ -1,0 +1,5 @@
+var iceScrumToken = "a76cfdf5c7294628b294e137d32a04d1";
+projectId = "WOFRDS2024";
+masterProjectId = "WOFMAINXCL";
+playerProjectIds = ["WOFXCL2024"];
+const API_base_url = "https://etml.icescrum.com/ws/project/";
