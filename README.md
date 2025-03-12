@@ -12,7 +12,7 @@ L'application utilise les versions suivantes des logiciels :
 ## **Lancer l'application**
 
 1. **Cloner le repo**  
-   Exécutez la commande suivante pour cloner le repository :
+   Exécutez la commande suivante dans une fenetre git bash pour cloner le repository :
    ```
    git clone https://github.com/romaindenis1/FlashCards.git
    cd ./FlashCards/flashcards/
@@ -32,7 +32,6 @@ Il faut renommer le fichier .env.example en .env
 On peux ou le faire a la main ou le faire avec la commande suivante depuis le /flashcards
 
 ```
-cd ./flashcards
 mv .env.example .env
 ```
 
