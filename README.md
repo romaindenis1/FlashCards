@@ -26,7 +26,16 @@ Installer les dépendances:
 npm install
 ```
 
-## 3. Executer les deux dernière commandes
+## 3. Configurer le .env
+
+Il faut renommer le fichier .env.example en .env
+On peux ou le faire a la main ou le faire avec la commande suivante depuis le /flashcards
+
+```
+mv .env.example .env
+```
+
+## 4. Executer les deux dernière commandes
 
 Il faut generer une clef d'application et lancer le server.
 
