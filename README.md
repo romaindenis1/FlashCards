@@ -32,6 +32,7 @@ Il faut renommer le fichier .env.example en .env
 On peux ou le faire a la main ou le faire avec la commande suivante depuis le /flashcards
 
 ```
+cd ./flashcards
 mv .env.example .env
 ```
 
