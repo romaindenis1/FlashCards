@@ -12,7 +12,7 @@
     </div>
     <div class="login-container">
       @if(isAuthenticated)
-        {{ auth.user.username }} ({{ auth.user.isAdmin ? 'admin' : 'user' }})
+        <span>{{ auth.user.username }} ({{ auth.user.isAdmin ? 'admin' : 'user' }})</span>
         <form action="{{ route('auth.handleLogout') }}" method="post">
           {{ csrfField() }}
           <button type="submit" class="btn btn-logout">Se déconnecter</button>
@@ -22,25 +22,20 @@
           {{ csrfField() }}
           @component('components/input', { name: 'username', label: "Nom d'utilisateur" })
           @endcomponent
-          @component('components/input', { name: 'password', label: 'Mot de passe', type: 'password' })
+          @component('components/input', { name: 'userPassword', label: 'Mot de passe', type: 'password' })
           @endcomponent
           <button type="submit" class="btn btn-login">Se connecter</button>
         </form>
+
         <form action="{{ route('auth.handleRegister') }}" method="post" id="registerForm">
           {{ csrfField() }}
           @component('components/input', { name: 'username', label: "Nom d'utilisateur", id: 'username' })
           @endcomponent
-          <div id="usernameError" class="error hidden">
-            Nom d'utilisateur déjà pris
-          </div>
-          @component('components/input', { name: 'password', label: 'Mot de passe', type: 'password', id: 'password' })
+          @component('components/input', { name: 'userPassword', label: 'Mot de passe', type: 'password', id: 'userPassword' })
           @endcomponent
-          @component('components/input', { name: 'confirm_password', label: 'Confirmer le mot de passe', type: 'password', id: 'confirmPassword' })
+          @component('components/input', { name: 'confirmUserPassword', label: 'Confirmer le mot de passe', type: 'password', id: 'confirmUserPassword' })
           @endcomponent
-          <div id="passwordError" class="error hidden">
-            Les mots de passe ne correspondent pas
-          </div>
-          <button type="submit" class="btn btn-register" id="submitButton">S'inscrire</button>
+          <button type="submit" class="btn btn-register" id="submitButton" disabled>S'inscrire</button>
         </form>
       @endif
     </div>
@@ -52,32 +47,65 @@
   </nav>
 </header>
 
-@include('partials/flash')
-
 <script>
-  document.getElementById('registerForm').addEventListener('submit', function(event) {
-    const password = document.getElementById('password').value;
-    const confirmPassword = document.getElementById('confirmPassword').value;
-    const passwordError = document.getElementById('passwordError');
+  setTimeout(() => {
+    const passwordField = document.getElementById('userPassword');
+    const confirmPasswordField = document.getElementById('confirmUserPassword');
+    const submitButton = document.getElementById('submitButton');
+    
+    function validatePasswords() {
+      const passwordValue = passwordField.value.trim();
+      const confirmPasswordValue = confirmPasswordField.value.trim();
 
-    if (password !== confirmPassword) {
-      event.preventDefault(); // Prevent form submission
-      passwordError.classList.remove('hidden'); // Show error
-      sessionStorage.setItem('flashError', 'Les mots de passe ne correspondent pas');
-      location.reload();
-    } else {
-      passwordError.classList.add('hidden'); // Hide error
-    }
-  });
+      // Log when password or confirm password field is entered
+      if (passwordValue) {
+        console.log("Password entered:", passwordField.value);
+      }
+      if (confirmPasswordValue) {
+        console.log("Confirm password entered:", confirmPasswordField.value);
+      }
 
-  document.addEventListener('DOMContentLoaded', function() {
-    const flashError = sessionStorage.getItem('flashError');
-    if (flashError) {
-      const flashContainer = document.createElement('div');
-      flashContainer.className = 'alert alert-danger';
-      flashContainer.textContent = flashError;
-      document.body.insertBefore(flashContainer, document.body.firstChild);
-      sessionStorage.removeItem('flashError');
+      console.log("Input password value:", passwordField.value);
+      console.log("Input confirm password value:", confirmPasswordField.value);
+      console.log("Trimmed Password:", passwordValue);
+      console.log("Trimmed Confirm Password:", confirmPasswordValue);
+      
+      const passwordsMatch = passwordValue === confirmPasswordValue;
+      console.log("Passwords match:", passwordsMatch);
+      
+      if (passwordsMatch && passwordValue !== '') {
+        submitButton.classList.add('btn-active');
+        submitButton.disabled = false;
+      } else {
+        submitButton.classList.remove('btn-active');
+        submitButton.disabled = true;
+      }
+      console.log("Button should be enabled:", passwordValue !== '' && passwordsMatch);
     }
-  });
+    passwordField.addEventListener('input', validatePasswords);
+    confirmPasswordField.addEventListener('input', validatePasswords);
+  }, 1000);
 </script>
+
+
+
+
+<style>
+  .btn-register {
+    background-color: gray;
+    cursor: not-allowed;
+  }
+
+  .btn-active {
+    background-color: #00b4cc;
+    cursor: pointer !important;
+  }
+
+  .hidden {
+    display: none;
+  }
+
+  .error {
+    color: red;
+  }
+</style>
