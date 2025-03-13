@@ -14,68 +14,66 @@ export default class SectionsController {
   }
 
   public async store({ request, session, response }: HttpContext) {
-    const { name, description, teacherIds } = request.only(['name', 'description', 'teacherIds'])
+    const payload = await request.validate({
+      schema: {
+        name: 'string|required|min:3|max:100',
+        description: 'string|max:255',
+        teacherIds: 'array',
+      },
+    })
 
-    const section = await Section.create({ name, description })
-    if (teacherIds) {
-      await section.related('teachers').attach(teacherIds)
+    try {
+      const section = await Section.create({ name: payload.name, description: payload.description })
+
+      if (payload.teacherIds?.length) {
+        await section.related('teachers').attach(payload.teacherIds)
+      }
+
+      session.flash('success', 'Section created successfully!')
+      return response.redirect().toRoute('sections.index')
+    } catch (error) {
+      session.flash('error', 'Failed to create section.')
+      return response.redirect().back()
     }
-
-    session.flash('success', 'Section created successfully!')
-    return response.redirect().toRoute('sections.index')
   }
 
   public async navigateTeacher({ params, view, request }: HttpContext) {
     const section = await Section.query()
       .where('id', params.id)
-      .preload('teachers') // Preload all teachers for the section
+      .preload('teachers')
       .firstOrFail()
 
-    const currentTeacherIndex = parseInt(request.input('teacherIndex', '0')) // Get the teacher index from the query parameters
     const teachers = section.teachers
+    const currentIndex = parseInt(request.input('teacherIndex', '0'), 10)
 
-    // Get the next or previous teacher based on the navigation
-    let nextTeacherIndex = currentTeacherIndex
-    if (request.input('direction') === 'next') {
-      nextTeacherIndex =
-        currentTeacherIndex + 1 < teachers.length ? currentTeacherIndex + 1 : currentTeacherIndex
-    } else if (request.input('direction') === 'previous') {
-      nextTeacherIndex =
-        currentTeacherIndex - 1 >= 0 ? currentTeacherIndex - 1 : currentTeacherIndex
-    }
-
-    const currentTeacher = teachers[nextTeacherIndex]
+    const nextIndex = Math.min(currentIndex + 1, teachers.length - 1)
+    const prevIndex = Math.max(currentIndex - 1, 0)
 
     return view.render('sections/show', {
       section,
-      currentTeacher,
-      currentTeacherIndex: nextTeacherIndex,
+      currentTeacher: teachers[currentIndex] ?? null,
+      currentTeacherIndex: currentIndex,
       teachers,
+      nextTeacherIndex: nextIndex,
+      prevTeacherIndex: prevIndex,
     })
   }
+
   public async show({ params, view }: HttpContext) {
-    // Get the section by ID
     const section = await Section.query()
       .where('id', params.sectionId)
-      .preload('teachers') // Preload teachers related to the section
+      .preload('teachers')
       .firstOrFail()
 
-    // Get the teacher index
-    const teacherIndex = parseInt(params.teacherIndex, 10)
     const teachers = section.teachers
-
-    // Get the current teacher (first teacher or based on index)
-    const currentTeacher = teachers[teacherIndex] || null
-
-    // Get the next and previous teacher indices
-    const nextTeacherIndex = teacherIndex + 1 < teachers.length ? teacherIndex + 1 : teacherIndex
-    const prevTeacherIndex = teacherIndex > 0 ? teacherIndex - 1 : teacherIndex
+    const teacherIndex = parseInt(params.teacherIndex, 10)
+    const currentTeacher = teachers[teacherIndex] ?? null
 
     return view.render('sections/show', {
       section,
       currentTeacher,
-      nextTeacherIndex,
-      prevTeacherIndex,
+      nextTeacherIndex: Math.min(teacherIndex + 1, teachers.length - 1),
+      prevTeacherIndex: Math.max(teacherIndex - 1, 0),
       teachers,
       teacherIndex,
     })
@@ -89,14 +87,19 @@ export default class SectionsController {
 
   public async update({ params, request, session, response }: HttpContext) {
     const section = await Section.findOrFail(params.id)
-    const { name, description, teacherIds } = request.only(['name', 'description', 'teacherIds'])
+    const payload = await request.validate({
+      schema: {
+        name: 'string|required|min:3|max:100',
+        description: 'string|max:255',
+        teacherIds: 'array',
+      },
+    })
 
-    section.name = name
-    section.description = description
+    section.merge({ name: payload.name, description: payload.description })
     await section.save()
 
-    if (teacherIds) {
-      await section.related('teachers').sync(teacherIds)
+    if (payload.teacherIds?.length) {
+      await section.related('teachers').sync(payload.teacherIds)
     }
 
     session.flash('success', 'Section updated successfully!')
