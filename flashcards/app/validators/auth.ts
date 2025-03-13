@@ -3,7 +3,7 @@ import vine from '@vinejs/vine'
 const loginUserValidator = vine.compile(
   vine.object({
     username: vine.string().minLength(3),
-    userpassword: vine.string(), // No validation here, just passing it through
+    userpassword: vine.string(),
   })
 )
 
@@ -16,11 +16,9 @@ const registerUserValidator = vine.compile(
       .maxLength(30)
       .unique({ table: 't_user', column: 'username' }),
 
-    // Update the fields to match the correct case (userPassword and confirmUserPassword)
-    userPassword: vine.string().optional(),
-    confirmUserPassword: vine.string().optional(),
+    userPassword: vine.string().minLength(6), 
+    confirmUserPassword: vine.string().minLength(6),
   })
 )
-
 
 export { loginUserValidator, registerUserValidator }
