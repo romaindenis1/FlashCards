@@ -1,5 +1,5 @@
 import { BaseSeeder } from '@adonisjs/lucid/seeders'
-import Section from '#models/section'
+import Section from '#models/deck'
 import { faker } from '@faker-js/faker'
 
 export default class SectionSeeder extends BaseSeeder {

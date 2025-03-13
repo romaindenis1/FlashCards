@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+      {{ deck.name }}
+    </title>
+    <link rel="stylesheet" href="/resources/css/deck.css" />
+  </head>
+  <body>
+
+    <!-- Header section (Include header partial) -->
+    @include('partials/header')
+
+    <!-- Deck Detail Container -->
+    <div class="container">
+      <!-- Deck Title -->
+      <h1>
+        Deck title: {{ deck.name }}
+      </h1>
+
+      <!-- Deck Description -->
+      <p>
+        Deck description: {{ deck.description || 'No description available' }}
+      </p>
+
+      <!-- Modify Button to Edit Deck -->
+      <a href="{{ route('decks.edit', { id: deck.id }) }}" class="modify-button">Modify</a>
+
+      <!-- Delete Deck Button -->
+      <button class="delete-button" data-deck-id="{{ deck.id }}">Delete Deck</button>
+
+      <!-- Add Flashcard Form -->
+      <form action="{{ route('flashcards.store', { deckId: deck.id }) }}" method="POST">
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+        <label for="question">Question</label>
+        <input type="text" name="question" id="question" required />
+
+        <label for="answer">Answer</label>
+        <input type="text" name="answer" id="answer" required />
+
+        <button type="submit">Add Flashcard</button>
+      </form>
+
+      <h3>
+        Flashcards
+      </h3>
+      <ul>
+        @if(deck.flashcards && deck.flashcards.size() > 0)
+          @each(flashcard in deck.flashcards)
+            <li>
+              <strong>{{ flashcard.question }}</strong>: {{ flashcard.answer }}
+            </li>
+          @endeach
+        @else
+          <li>
+            No flashcards found for this deck.
+          </li>
+        @endif
+      </ul>
+
+    </div>
+
+    <!-- Footer section (Include footer partial) -->
+    @include('partials/footer')
+
+    <!-- JavaScript to handle delete -->
+    <!-- JavaScript to handle delete -->
+    <script>
+      document.querySelector(".delete-button").addEventListener("click", function() {
+        const deckId = this.getAttribute("data-deck-id");
+        const confirmation = confirm("Are you sure you want to delete this deck?");
+        if (confirmation) {
+          // If confirmed, proceed with deletion
+          fetch(`/decks/${deckId}`, {
+            method: "DELETE",
+            headers: {
+              "Content-Type": "application/json",
+              "X-CSRF-TOKEN": "{{ csrfToken }}"
+            }
+          }).then(response => {
+            if (response.ok) {
+              // Redirect to the decks page after deletion
+              window.location.href = "/decks";
+            } else {
+              alert("Failed to delete the deck");
+            }
+          }).catch(error => {
+            console.error("Error:", error);
+            alert("Error deleting deck");
+          });
+        } else {
+          // If cancelled, redirect back to the current deck's page
+          window.location.href = `/decks/${deckId}`; // Redirect to the deck's page
+        }
+      });
+    </script>
+
+  </body>
+</html>

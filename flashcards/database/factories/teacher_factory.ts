@@ -1,5 +1,5 @@
 import factory from '@adonisjs/lucid/factories'
-import Teacher from '#models/teacher'
+import Teacher from '#models/flashcard'
 
 export const TeacherFactory = factory
   .define(Teacher, async ({ faker }) => {

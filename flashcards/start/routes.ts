@@ -8,16 +8,18 @@
 */
 
 import AuthController from '#controllers/auth_controller'
-import TeachersController from '#controllers/teachers_controller'
-import SectionController from '#controllers/sections_controller'
+import TeachersController from '#controllers/flashcard_controller'
+import SectionController from '#controllers/deck_controller'
 import router from '@adonisjs/core/services/router'
 import { middleware } from './kernel.js'
-import Section from '#models/section'
+import Section from '#models/deck'
+import DecksController from '#controllers/deck_controller'
+import FlashcardsController from '#controllers/flashcard_controller'
 // Route permettant d'accéder à la liste des enseignants (homepage)
 router
   .get('/', async ({ view }) => {
     // Fetch all sections and preload their teachers
-    const sections = await Section.query().preload('teachers').exec()
+    const sections = await Section.query().preload('flashcards').exec()
 
     // Render the homepage view and pass sections to it
     return view.render('pages/home', { sections })
@@ -25,50 +27,19 @@ router
   .as('home')
 
 // Route permettant de voir les détails d'un enseignant
-router
-  .get('/teacher/:id/show', [TeachersController, 'show'])
-  .as('teacher.show')
-  .use(middleware.auth())
+// Deck routes
+router.get('/decks', [DecksController, 'index'])
+router.get('/decks/create', [DecksController, 'create'])
+router.post('/decks', [DecksController, 'store']).as('decks.store')
+router.get('/decks/:id', [DecksController, 'show']).as('decks.show') // Show deck with options to edit, delete, and add flashcards
+router.get('/decks/:id/edit', [DecksController, 'edit']).as('decks.edit') // Show the edit page
+router.put('/decks/:id', [DecksController, 'update']).as('decks.update') // Update deck
 
-// Show section and first teacher
-router
-  .get('/section/:sectionId/teacher/:teacherIndex', 'SectionsController.show')
-  .as('section.show')
+// Delete deck route
+router.delete('/decks/:id', [DecksController, 'destroy']).as('decks.destroy') // Delete deck
 
-// Route permettant d'afficher le formulaire permettant l'ajout d'un enseignant
-router
-  .get('/teacher/add', [TeachersController, 'create'])
-  .as('teacher.create')
-  .use(middleware.auth())
-  .use(middleware.ensureAdmin())
-
-// Route permettant l'ajout de l'enseignant
-router
-  .post('/teacher/add', [TeachersController, 'store'])
-  .as('teacher.store')
-  .use(middleware.auth())
-  .use(middleware.ensureAdmin())
-
-// Route permettant d'afficher le formulaire permettant la mise à jour d'un enseignant
-router
-  .get('/teacher/:id/edit', [TeachersController, 'edit'])
-  .as('teacher.edit')
-  .use(middleware.auth())
-  .use(middleware.ensureAdmin())
-
-// Route permettant la modification de l'enseignant
-router
-  .post('/teacher/:id/update', [TeachersController, 'update'])
-  .as('teacher.update')
-  .use(middleware.auth())
-  .use(middleware.ensureAdmin())
-
-// Route permettant de supprimer un enseignant
-router
-  .get('/teacher/:id/destroy', [TeachersController, 'destroy'])
-  .as('teacher.destroy')
-  .use(middleware.auth())
-  .use(middleware.ensureAdmin())
+// Flashcard routes
+router.post('/decks/:deckId/flashcards', [FlashcardsController, 'store']).as('flashcards.store')
 
 // Route permettant de se connecter
 router
@@ -85,4 +56,3 @@ router
   .as('auth.handleLogout')
   .use(middleware.auth())
 
-router.get('/sections', [SectionController, 'index']).as('sections.index')

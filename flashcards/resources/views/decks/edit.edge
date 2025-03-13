@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+      Edit Deck
+    </title>
+    <link rel="stylesheet" href="/resources/css/deck.css" />
+  </head>
+  <body>
+
+    <!-- Header Section -->
+    @include('partials/header')
+
+    <!-- Edit Deck Form -->
+    <div class="container">
+      <h1>
+        Edit Deck: {{ deck.name }}
+      </h1>
+
+      <form id="edit-deck-form">
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+        <input type="hidden" name="deck_id" value="{{ deck.id }}" />
+
+        <label for="name">Deck Title</label>
+        <input type="text" name="name" value="{{ deck.name }}" id="name" required />
+
+        <label for="description">Deck Description</label>
+        <textarea name="description" id="description" required>{{ deck.description }}</textarea>
+
+        <div class="buttons">
+          <button type="submit" class="confirm-button">Confirm Changes</button>
+          <a href="/" class="cancel-button">Cancel</a>
+        </div>
+      </form>
+    </div>
+
+    <!-- Footer Section -->
+    @include('partials/footer')
+
+    <!-- JavaScript to handle form submission -->
+    <script>
+      document.getElementById("edit-deck-form").addEventListener("submit", function(event) {
+        event.preventDefault(); // Prevent default form submission
+        const deckId = document.querySelector('[name="deck_id"]').value;
+        const name = document.querySelector('[name="name"]').value;
+        const description = document.querySelector('[name="description"]').value;
+        const csrfToken = document.querySelector('[name="_csrf"]').value;
+        // Prepare the data for the PUT request
+        const data = {
+          name: name,
+          description: description,
+          _csrf: csrfToken,
+          _method: "PUT"
+        };
+        // Send the PUT request using fetch()
+        fetch(`/decks/${deckId}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            "X-CSRF-TOKEN": csrfToken
+          },
+          body: JSON.stringify(data)
+        }).then(response => {
+          if (response.ok) {
+            return response.json(); // Parse the JSON response if OK
+          } else {
+            throw new Error(`Failed to update the deck. Status: ${response.status}`);
+          }
+        }).then(responseData => {
+          // If successful, the response should indicate success
+          if (responseData && responseData.success) {
+            window.location.href = "/decks"; // Redirect to the homepage after updating
+          } else {
+            throw new Error("Failed to update deck.");
+          }
+        }).catch(error => {
+          console.error("Error:", error);
+          alert("Error updating deck: " + error.message);
+        });
+      });
+    </script>
+
+  </body>
+</html>
