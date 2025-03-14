@@ -56,3 +56,8 @@ router
   .as('auth.handleLogout')
   .use(middleware.auth())
 
+router
+  .get('/register', async ({ view }) => {
+    return view.render('auth/register')
+  })
+  .as('auth.register')

@@ -6,7 +6,9 @@
       </a>
     </div>
     <div class="titre-header">
-      <h1>Flashcards P_Bulle</h1>
+      <h1>
+        Flashcards P_Bulle
+      </h1>
     </div>
     <div class="login-container">
       @if(isAuthenticated)
@@ -19,75 +21,31 @@
         <form action="{{ route('auth.handleLogin') }}" method="post">
           {{ csrfField() }}
           <label for="loginUsername">Nom d'utilisateur</label>
-          <input type="text" name="username" id="loginUsername" placeholder="Entrez votre nom d'utilisateur" required>
+          <input
+            type="text"
+            name="username"
+            id="loginUsername"
+            placeholder="Entrez votre nom d'utilisateur"
+            required
+          />
 
           <label for="loginPassword">Mot de passe</label>
-          <input type="password" name="password" id="loginPassword" placeholder="Entrez votre mot de passe" required>
+          <input
+            type="password"
+            name="password"
+            id="loginPassword"
+            placeholder="Entrez votre mot de passe"
+            required
+          />
 
           <button type="submit" class="btn btn-login">Se connecter</button>
         </form>
 
-        <form action="{{ route('auth.handleRegister') }}" method="post" id="registerForm">
-          {{ csrfField() }}
-          <label for="registerUsername">Nom d'utilisateur</label>
-          <input type="text" name="username" id="registerUsername" placeholder="Choisissez un nom d'utilisateur" required>
-
-          <label for="registerPassword">Mot de passe</label>
-          <input type="password" name="userPassword" id="registerPassword" placeholder="Créez un mot de passe" required>
-
-          <label for="confirmRegisterPassword">Confirmer le mot de passe</label>
-          <input type="password" name="confirmUserPassword" id="confirmRegisterPassword" placeholder="Confirmez votre mot de passe" required>
-
-          <button type="submit" class="btn btn-register" id="submitButton" style="display:none;">S'inscrire</button>
-        </form>
+        <!-- Register Button -->
+        <a href="{{ route('auth.registerPage') }}">
+          <button class="btn btn-register">S'inscrire</button>
+        </a>
       @endif
     </div>
   </div>
 </header>
-
-<script>
-  document.addEventListener("DOMContentLoaded", function () {
-    const passwordField = document.getElementById("registerPassword");
-    const confirmPasswordField = document.getElementById("confirmRegisterPassword");
-    const submitButton = document.getElementById("submitButton");
-
-    function validatePasswords() {
-      const passwordValue = passwordField.value.trim();
-      const confirmPasswordValue = confirmPasswordField.value.trim();
-
-      const passwordsMatch = passwordValue === confirmPasswordValue;
-
-      if (passwordsMatch && passwordValue.length > 0) {
-        submitButton.style.display = "inline-block"; // Show button when passwords match
-        submitButton.classList.add("btn-active");
-        submitButton.disabled = false;
-      } else {
-        submitButton.style.display = "none"; // Hide button when passwords don't match
-        submitButton.classList.remove("btn-active");
-        submitButton.disabled = true;
-      }
-    }
-
-    passwordField.addEventListener("input", validatePasswords);
-    confirmPasswordField.addEventListener("input", validatePasswords);
-
-    document.getElementById("registerForm").addEventListener("submit", function (event) {
-      if (passwordField.value.trim() === "" || passwordField.value !== confirmPasswordField.value) {
-        event.preventDefault();
-        alert("Les mots de passe ne correspondent pas !");
-      }
-    });
-  });
-</script>
-
-<style>
-  .btn-register {
-    background-color: gray;
-    cursor: not-allowed;
-  }
-
-  .btn-active {
-    background-color: #00b4cc;
-    cursor: pointer !important;
-  }
-</style>
