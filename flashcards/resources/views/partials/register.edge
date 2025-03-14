@@ -70,14 +70,14 @@
       }
       
       .form-container button {
-        padding: 10px;
-        background-color: gray;
-        border: none;
-        border-radius: 4px;
-        font-size: 16px;
-        color: white;
-        cursor: not-allowed;
-      }
+  padding: 10px;
+  background-color: #00b4cc ;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  color: white;
+  cursor: not-allowed;
+}
       
       .btn-active {
         background-color: #00b4cc;
@@ -87,12 +87,6 @@
       .form-footer {
         text-align: center;
         margin-top: 20px;
-      }
-      
-      .form-footer a {
-        color: #00b4cc;
-        text-decoration: none;
-        font-size: 14px;
       }
       
       .form-footer a:hover {
@@ -134,7 +128,7 @@
         <label for="registerPassword">Mot de passe</label>
         <input
           type="password"
-          name="userPassword"
+          name="userpassword"
           id="registerPassword"
           placeholder="Créez un mot de passe"
           required
@@ -151,10 +145,6 @@
 
         <button type="submit" class="btn btn-register" id="submitButton" style="display:none;">S'inscrire</button>
       </form>
-
-      <div class="form-footer">
-        <a href="{{ route('auth.loginPage') }}">Retour à la connexion</a>
-      </div>
     </div>
 
     <script>
@@ -169,11 +159,9 @@
           if (passwordsMatch && passwordValue.length > 0) {
             submitButton.style.display = "inline-block"; // Show button when passwords match
             submitButton.classList.add("btn-active");
-            submitButton.disabled = false;
           } else {
             submitButton.style.display = "none"; // Hide button when passwords don't match
             submitButton.classList.remove("btn-active");
-            submitButton.disabled = true;
           }
         }
         passwordField.addEventListener("input", validatePasswords);

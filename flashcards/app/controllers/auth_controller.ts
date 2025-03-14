@@ -7,36 +7,41 @@ export default class AuthController {
   /**
    * Gérer la connexion d'un utilisateur
    */
-  async handleLogin({ request, auth, session, response }: HttpContext) {
+  async handleLogin({ request, response, auth }: HttpContext) {
     try {
-      // Validate user input
-      const payload = await loginUserValidator.validate(request.all())
-
-      // Find user by username
-      const user = await User.findBy('username', payload.username)
+      const { username, userpassword } = request.all();
+      console.log('Login attempt:', { username, userpassword });
+  
+      // Ensure username and password are provided
+      if (!username || !userpassword) {
+        return response.badRequest('Nom d\'utilisateur ou mot de passe manquant');
+      }
+  
+      // Proceed with the login logic
+      const user = await User.query().where('username', username).first();
       if (!user) {
-        session.flash('error', 'Nom d\'utilisateur ou mot de passe incorrect')
-        return response.redirect().toRoute('home')
+        console.log('User not found');
+        return response.badRequest('Nom d\'utilisateur ou mot de passe incorrect');
       }
-
-      // Verify password
-      const isPasswordValid = await Hash.verify(user.password, payload.userpassword)
+  
+      // Check if the password matches the hashed password in the database
+      const isPasswordValid = await Hash.verify(userpassword.trim(), user.password);
       if (!isPasswordValid) {
-        session.flash('error', 'Nom d\'utilisateur ou mot de passe incorrect')
-        return response.redirect().toRoute('home')
+        console.log('Invalid password');
+        return response.badRequest('Nom d\'utilisateur ou mot de passe incorrect');
       }
-
-      // Log in user
-      await auth.use('web').login(user)
-      session.flash('success', "Connexion réussie")
-      return response.redirect().toRoute('home')
-
+  
+      // Log the user in
+      await auth.use('web').login(user);
+      console.log('User logged in successfully:', user.username);
+      return response.redirect('/');
     } catch (error) {
-      console.error('Erreur de connexion:', error)
-      session.flash('error', 'Une erreur est survenue lors de la connexion')
-      return response.redirect().toRoute('home')
+      console.error('Something went wrong:', error);
+      return response.internalServerError('Something went wrong, please try again.');
     }
   }
+
+  
 
   /**
    * Gérer la déconnexion d'un utilisateur
@@ -50,42 +55,44 @@ export default class AuthController {
   /**
    * Gérer l'inscription d'un utilisateur
    */
-  async handleRegister({ request, auth, session, response }: HttpContext) {
+  public async handleRegister({ request, response }: HttpContext) {
     try {
-      // Validate user input
-      const payload = await registerUserValidator.validate(request.all())
-
-      // Ensure password is provided (fix for undefined error)
-      if (!payload.userPassword) {
-        session.flash('error', 'Le mot de passe est requis')
-        return response.redirect().toRoute('home')
-      }
-
-      // Hash the password
-      const hashedPassword = await Hash.make(payload.userPassword)
-
-      // Check if username already exists
-      const existingUser = await User.findBy('username', payload.username)
+      console.log("🔹 Received register request:", request.all());
+  
+      // Validate input
+      const payload = await request.validateUsing(registerUserValidator);
+      console.log("✅ Validation passed:", payload);
+  
+      // Check if user already exists
+      const existingUser = await User.findBy('username', payload.username);
       if (existingUser) {
-        session.flash('error', "Le nom d'utilisateur existe déjà.")
-        return response.redirect().toRoute('home')
+        console.error("❌ User already exists:", payload.username);
+        return response.badRequest({ error: "Username already taken" });
       }
+  
+      
+  
+      console.log("✅ User created successfully:", payload.username);
+      console.log("Password :" + payload.userpassword);
 
-      // Create new user
+      // Hash password and create user
+      const hashedPassword = await Hash.make(payload.userpassword);
+      console.log("🔹 Hashed password created");
+  
       const user = await User.create({
         username: payload.username,
-        password: hashedPassword,
-      })
-
-      // Log in user automatically after registration
-      await auth.use('web').login(user)
-      session.flash('success', "Inscription et connexion réussies")
-      return response.redirect().toRoute('home')
-
+        password: hashedPassword
+      });
+      // Redirect to login or home
+      return response.redirect().toRoute('home');
     } catch (error) {
-      console.error('Erreur d\'inscription:', error)
-      session.flash('error', "Une erreur est survenue lors de l'inscription.")
-      return response.redirect().toRoute('home')
+      console.error("❌ Error in handleRegister:", error);
+      return response.internalServerError({ error: "Something went wrong" });
     }
+  }
+  async handleRegisterView({ view }: HttpContext) {
+    console.log('Rendering register view...');
+    
+    return view.render('register');
   }
 }

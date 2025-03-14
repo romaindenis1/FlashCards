@@ -3,6 +3,7 @@ body {
   margin: auto;
   width: 80%;
 }
+
 .logo {
   width: 50%;
   height: auto;
@@ -96,7 +97,7 @@ label {
 .login-container .btn-login {
   width: 30%;
   display: inline-block;
-  border: 1px solid #ccc;
+  border: 1px solid #00b4cc;
   border-radius: 8px;
 }
 
@@ -115,6 +116,16 @@ label {
 
 .btn-login {
   background-color: #00b4cc;
+  color: white;
+  border: 1px solid #00b4cc;
+  border-radius: 8px;
+  height: 4.5em;
+  width: 100%;
+  cursor: pointer;
+}
+
+.btn-login:hover {
+  opacity: 0.8;
 }
 
 .btn {
@@ -125,6 +136,7 @@ label {
   cursor: pointer;
   height: 4.5em;
   border-radius: 8px;
+  background-color: #00b4cc;
 }
 
 .btn:hover {
@@ -173,6 +185,14 @@ label {
   margin-top: 5px;
   margin-bottom: 15px;
 }
+
 .hidden {
   display: none;
 }
+
+.btn:disabled,
+.btn-login:disabled {
+  background-color: gray !important;
+  cursor: not-allowed;
+}
+

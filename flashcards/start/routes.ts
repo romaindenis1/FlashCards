@@ -8,19 +8,24 @@
 */
 
 import AuthController from '#controllers/auth_controller'
-import TeachersController from '#controllers/flashcard_controller'
-import SectionController from '#controllers/deck_controller'
 import router from '@adonisjs/core/services/router'
 import { middleware } from './kernel.js'
 import Section from '#models/deck'
 import DecksController from '#controllers/deck_controller'
 import FlashcardsController from '#controllers/flashcard_controller'
+console.log('✅ AuthController imported in routes.ts')
+
+router.get('/register', async ({ view }) => {
+  console.log('🔹 Route /register hit')
+  return view.render('partials/register')
+}).as('auth.handleRegisterView')
+
 // Route permettant d'accéder à la liste des enseignants (homepage)
 router
   .get('/', async ({ view }) => {
     // Fetch all sections and preload their teachers
     const sections = await Section.query().preload('flashcards').exec()
-
+    console.log('AuthController:', AuthController);
     // Render the homepage view and pass sections to it
     return view.render('pages/home', { sections })
   })
@@ -56,8 +61,5 @@ router
   .as('auth.handleLogout')
   .use(middleware.auth())
 
-router
-  .get('/register', async ({ view }) => {
-    return view.render('auth/register')
-  })
-  .as('auth.register')
+
+
