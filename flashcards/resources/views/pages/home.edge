@@ -1,6 +1,6 @@
 @component('components/layout', { title: 'Accueil' })
   <h3>
-    Liste des sections
+    Mes Decks
   </h3>
   <table>
     <thead>
@@ -11,19 +11,35 @@
         <th>
           Description
         </th>
+        <th>
+          Nombre de cartes
+        </th>
       </tr>
     </thead>
     <tbody>
-      @each(section in sections)
-        <tr>
-          <td>
-            {{ section.name }}
-          </td>
-          <td>
-            {{ section.description }}
-          </td>
-        </tr>
-      @endeach
+     @if(isAuthenticated) 
+    <p>
+      <a href="/decks/create">Créez un deck ici</a>
+    </p>
+  @endif
+      @if(decks && decks.length)
+        @each(deck in decks)
+          <tr>
+            <td>
+              <a href="/decks/{{ deck.id }}">{{ deck.name }}</a>
+            </td>
+            <td>
+              {{ deck.description || 'Aucune description disponible' }}
+            </td>
+            <td>
+              {{ deck.flashcards.length }}
+            </td>
+          </tr>
+        @endeach
+        
+      @else
+        
+      @endif
     </tbody>
   </table>
 @endcomponent

@@ -82,7 +82,6 @@ export default class DecksController {
       return response.status(500).json({ success: false, message: 'Error updating deck' })
     }
   }
-
   public async destroy({ params, response, view }: HttpContext) {
     // Try to find the deck by ID
     const deck = await Deck.find(params.id)

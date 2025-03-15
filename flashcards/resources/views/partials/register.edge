@@ -95,6 +95,11 @@
   </head>
   <body>
     <div class="container">
+    @error('E_INVALID_CREDENTIALS')
+              <div class="alert alert-danger">
+                {{ $message }}
+              </div>
+            @enderror
       <div class="logo-header">
         <a href="{{ route('home') }}">
           <img src="/img/logo.jpg" alt="Logo" class="logo" />
@@ -115,6 +120,8 @@
       >
         {{ csrfField() }}
 
+          
+            
             <label for="registerUsername">Nom d'utilisateur</label>
         <input
           type="text"

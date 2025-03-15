@@ -35,7 +35,7 @@ export default class AuthController {
       // Log the user in
       await auth.use('web').login(user);
       console.log('User logged in successfully:', user.username);
-      return response.redirect('/');
+      return response.redirect('/decks');
     } catch (error) {
       console.error('Something went wrong:', error);
       return response.internalServerError('Something went wrong, please try again.');
@@ -57,7 +57,6 @@ export default class AuthController {
    * Gérer l'inscription d'un utilisateur
    */
   public async handleRegister({ request, response,auth, session }: HttpContext) {
-    try {
       console.log("🔹 Received register request:", request.all());
   
       // Validate input
@@ -67,11 +66,10 @@ export default class AuthController {
       // Check if user already exists
       const existingUser = await User.findBy('username', payload.username);
       if (existingUser) {
-        console.error("❌ User already exists:", payload.username);
-        return response.badRequest({ error: "Username already taken" });
+        session.flash('E_INVALID_CREDENTIALS', "L'utilisateur existe déjà")
+        return response.redirect().toRoute('register')
       }
   
-      
   
       console.log("✅ User created successfully:", payload.username);
       console.log("Password :" + payload.userpassword);
@@ -88,10 +86,6 @@ export default class AuthController {
       await auth.use('web').login(user)
       session.flash('success', "Inscription et connexion réussies")
       return response.redirect().toRoute('home')
-    } catch (error) {
-      console.error("❌ Error in handleRegister:", error);
-      return response.internalServerError({ error: "Something went wrong" });
-    }
   }
   async handleRegisterView({ view }: HttpContext) {
     console.log('Rendering register view...');
