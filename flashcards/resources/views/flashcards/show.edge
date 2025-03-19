@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+      Flashcard Details
+    </title>
+    <link rel="stylesheet" href="/resources/css/deck.css" />
+  </head>
+  <body>
+
+    <!-- Header section (Include header partial) -->
+    @include('partials/header')
+
+    <!-- Flashcard Detail Container -->
+    <div class="container">
+      <!-- Flashcard Question and Answer -->
+      <div class="flashcard-detail">
+        <div class="flashcard-side question">
+          <strong>Question:</strong>
+          <p>
+            {{ flashcard.question }}
+          </p>
+        </div>
+        <div class="flashcard-side answer">
+          <strong>Answer:</strong>
+          <p>
+            {{ flashcard.answer }}
+          </p>
+        </div>
+      </div>
+
+      <!-- Back Button to go back to Deck -->
+      <a href="{{ route('decks.show', { id: deck.id }) }}" class="back-button">Back to Deck</a>
+    </div>
+
+    <!-- Footer section (Include footer partial) -->
+    @include('partials/footer')
+
+  </body>
+</html>
