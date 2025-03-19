@@ -45,9 +45,6 @@ router.put('/decks/:id', [DecksController, 'update']).as('decks.update') // Upda
 // Delete deck route
 router.delete('/decks/:id', [DecksController, 'destroy']).as('decks.destroy') // Delete deck
 
-// Flashcard routes
-router.post('/decks/:deckId/flashcards', [FlashcardsController, 'store']).as('flashcards.store')
-
 // Route permettant de se connecter
 router
   .post('/login', [AuthController, 'handleLogin'])
@@ -64,3 +61,8 @@ router
   .use(middleware.auth())
 
 //changement
+// Create Flashcard
+router.post('/decks/:deckId/flashcards', [FlashcardsController, 'create']).as('flashcards.store')
+
+// Show Flashcards
+router.get('/decks/:deckId/flashcards/:id', [FlashcardsController, 'show']).as('flashcards.show')

@@ -2,40 +2,41 @@
 import Flashcard from '#models/flashcard'
 import Deck from '#models/deck'
 import { HttpContext } from '@adonisjs/core/http'
-import DecksController from './deck_controller.js'
 
 export default class FlashcardsController {
-  async store({ request, response, params }: HttpContext) {
-    const { question, answer } = request.only(['question', 'answer'])
-    const deckId = params.deckId
+  // This method will render the flashcard creation form
+  public async index({ params, view }: HttpContext) {
+    const deck = await Deck.findOrFail(params.deckId) // Find the deck by ID
+    return view.render('flashcards/create', { deck }) // Render the flashcard creation page and pass the deck data
+  }
 
+  // This method will handle the actual creation of a flashcard (form submission)
+  public async create({ request, response, params }: HttpContext) {
+    const { question, answer } = request.only(['question', 'answer'])
+    const deck = await Deck.findOrFail(params.deckId) // Find the deck by ID
+
+    // Create the flashcard
     const flashcard = await Flashcard.create({
       question,
       answer,
-      deckId: deckId,
+      deckId: deck.id, // Associate flashcard with the deck
     })
 
-    response.redirect().toRoute('decks.show', { id: deckId })
+    // Redirect back to the deck's page after adding the flashcard
+    return response.redirect().toRoute('decks.show', { id: deck.id })
   }
 
-  async update({ request, response, params }: HttpContext) {
-    const { question, answer } = request.only(['question', 'answer'])
-    const cardId = params.cardId
+  // This method will handle displaying all the flashcards for a specific deck
+  public async show({ params, view }: HttpContext) {
+    const { deckId, id } = params
 
-    const flashcard = await Flashcard.findOrFail(cardId)
-    flashcard.question = question
-    flashcard.answer = answer
-    await flashcard.save()
+    // Find the deck by deckId
+    const deck = await Deck.findOrFail(deckId)
 
-    response.redirect().toRoute('decks.show', { id: flashcard.deckId })
-  }
+    // Find the flashcard by id
+    const flashcard = await Flashcard.findOrFail(id)
 
-  async destroy({ params, response }: HttpContext) {
-    const cardId = params.cardId
-
-    const flashcard = await Flashcard.findOrFail(cardId)
-    await flashcard.delete()
-
-    response.redirect().toRoute('decks.show', { id: flashcard.deckId })
+    // Return the flashcard data to the view
+    return view.render('flashcards/show', { deck, flashcard })
   }
 }
