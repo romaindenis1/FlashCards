@@ -15,17 +15,19 @@ import DecksController from '#controllers/deck_controller'
 import FlashcardsController from '#controllers/flashcard_controller'
 console.log('✅ AuthController imported in routes.ts')
 
-router.get('/register', async ({ view }) => {
-  console.log('🔹 Route /register hit')
-  return view.render('partials/register')
-}).as('auth.handleRegisterView')
+router
+  .get('/register', async ({ view }) => {
+    console.log('🔹 Route /register hit')
+    return view.render('partials/register')
+  })
+  .as('auth.handleRegisterView')
 
 // Route permettant d'accéder à la liste des enseignants (homepage)
 router
   .get('/', async ({ view }) => {
     // Fetch all sections and preload their teachers
     const sections = await Section.query().preload('flashcards').exec()
-    console.log('AuthController:', AuthController);
+    console.log('AuthController:', AuthController)
     // Render the homepage view and pass sections to it
     return view.render('pages/home', { sections })
   })
@@ -61,5 +63,4 @@ router
   .as('auth.handleLogout')
   .use(middleware.auth())
 
-
-
+//changement
