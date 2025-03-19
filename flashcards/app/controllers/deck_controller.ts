@@ -17,10 +17,12 @@ export default class DecksController {
 
   public async show({ params, response, view }: HttpContext) {
     try {
-      const deck = await Deck.findOrFail(params.id) // Find deck
-      const flashcards = await Flashcard.query().where('deck_id', deck.id) // Get its flashcards
+      const deck = await Deck.query()
+        .where('id', params.id)
+        .preload('flashcards') // Ensure flashcards are loaded
+        .firstOrFail()
 
-      return view.render('decks/show', { deck, flashcards }) // Pass both deck & flashcards
+      return view.render('decks/show', { deck })
     } catch (error) {
       return response.status(404).json({ message: 'Deck not found' })
     }
@@ -102,22 +104,5 @@ export default class DecksController {
       console.log('Error deleting deck:', error)
       return response.status(500).json({ message: 'Error deleting deck' })
     }
-  }
-
-  // Store a new flashcard in the deck
-  public async storeFlashcard({ params, request, response }: HttpContext) {
-    const deck = await Deck.findOrFail(params.id)
-
-    const { question, answer } = request.only(['question', 'answer'])
-
-    // Create a new flashcard and associate it with the deck
-    await Flashcard.create({
-      deckId: deck.id,
-      question,
-      answer,
-    })
-
-    // Redirect back to the deck's page after adding the flashcard
-    return response.redirect(`/decks/${params.id}`)
   }
 }
