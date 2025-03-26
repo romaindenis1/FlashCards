@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+      {{ deck.name }}
+    </title>
+    <link rel="stylesheet" href="/resources/css/deck.css" />
+  </head>
+  <body>
+
+    <!-- Header section (Include header partial) -->
+    @include('partials/header')
+
+    <!-- Deck Detail Container -->
+    <div class="container">
+      <!-- Deck Title -->
+      <h1>
+        {{ deck.name }}
+      </h1>
+
+      <!-- Deck Description -->
+      <p>
+        Deck description: {{ deck.description || 'No description available' }}
+      </p>
+
+      <!-- Number of Flashcards -->
+      <p>
+        Total Flashcards: {{ deck.flashcards ? deck.flashcards.length : 0 }}
+      </p>
+
+      <!-- Modify Button to Edit Deck -->
+      <a href="{{ route('decks.edit', { id: deck.id }) }}" class="modify-button">Modify</a>
+
+      <!-- Add Cards Button -->
+      <a href="{{ route('flashcards.store', { deckId: deck.id }) }}" class="auth-button">Add Cards</a>
+
+      <!-- Delete Deck Button -->
+      <button class="delete-button" data-deck-id="{{ deck.id }}">Delete Deck</button>
+
+      <h3>
+        Flashcards
+      </h3>
+
+      <!-- Flashcards Container -->
+      <div class="flashcards-container">
+        @if(deck.flashcards && deck.flashcards.length > 0)
+          @each(flashcard in deck.flashcards)
+            <div class="flashcard-row">
+              <a
+                href="{{ route('flashcards.show', { deckId: deck.id, id: flashcard.id }) }}"
+                class="flashcard-link"
+              >
+                <div class="flashcard-column question">
+                  <strong>{{ flashcard.question }}</strong>
+                </div>
+                <div class="flashcard-column answer">
+                  {{ flashcard.answer }}
+                </div>
+              </a>
+            </div>
+          @endeach
+        @else
+          <p>
+            No flashcards found for this deck.
+          </p>
+        @endif
+      </div>
+
+    </div>
+
+    <!-- Footer section (Include footer partial) -->
+    @include('partials/footer')
+
+    <!-- JavaScript to handle delete -->
+    <script>
+      document.querySelector(".delete-button").addEventListener("click", function() {
+        const deckId = this.getAttribute("data-deck-id");
+        const confirmation = confirm("Are you sure you want to delete this deck?");
+        if (confirmation) {
+          fetch(`/decks/${deckId}`, {
+            method: "DELETE",
+            headers: {
+              "Content-Type": "application/json",
+              "X-CSRF-TOKEN": "{{ csrfToken }}"
+            }
+          }).then(response => {
+            if (response.ok) {
+              window.location.href = "/decks";
+            } else {
+              alert("Failed to delete the deck");
+            }
+          }).catch(error => {
+            console.error("Error:", error);
+            alert("Error deleting deck");
+          });
+        }
+      });
+    </script>
+
+  </body>
+</html>
