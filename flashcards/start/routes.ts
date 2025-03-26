@@ -68,3 +68,11 @@ router.post('/decks/:deckId/flashcards', [FlashcardsController, 'create']).as('f
 
 // Show Flashcards
 router.get('/decks/:deckId/flashcards/:id', [FlashcardsController, 'show']).as('flashcards.show')
+
+router
+  .post('/decks/:deckId/flashcards/:id/validate', [FlashcardsController, 'validateFlashcard'])
+  .as('flashcards.validate')
+
+router
+  .delete('/decks/:deckId/flashcards/:flashcardId', [FlashcardsController, 'destroy'])
+  .as('flashcards.destroy')

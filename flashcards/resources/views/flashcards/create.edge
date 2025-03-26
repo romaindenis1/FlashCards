@@ -17,6 +17,13 @@
         Add a Flashcard
       </h1>
 
+      <!-- Display flash messages -->
+      @if (session.has('error'))
+        <div class="alert alert-danger">
+          {{ session.get('error') }}
+        </div>
+      @endif
+      
       <form action="{{ route('flashcards.store', { deckId: deck.id }) }}" method="POST" class="deck-form">
         {{ csrfField() }}
 
