@@ -74,5 +74,12 @@ router
   .as('flashcards.validate')
 
 router
+  .get('/decks/:deckId/flashcards/:id/edit', [FlashcardsController, 'edit'])
+  .as('flashcards.edit')
+router
   .delete('/decks/:deckId/flashcards/:flashcardId', [FlashcardsController, 'destroy'])
   .as('flashcards.destroy')
+
+router
+  .put('/decks/:deckId/flashcards/:id', [FlashcardsController, 'update'])
+  .as('flashcards.update')

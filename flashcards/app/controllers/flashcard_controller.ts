@@ -44,6 +44,11 @@ export default class FlashcardsController {
 
     return response.redirect().toRoute('decks.show', { id: params.deckId })
   }
+  public async edit({ params, view }: HttpContext) {
+    const flashcard = await Flashcard.query().where('id', params.id).firstOrFail()
+    const deckId = params.deckId
+    return view.render('flashcards/edit', { flashcard, deckId })
+  }
   public async destroy({ params, response }: HttpContext) {
     try {
       const deckId = params.deckId
@@ -71,6 +76,20 @@ export default class FlashcardsController {
     } catch (error) {
       console.error('Error deleting flashcard:', error)
       return response.status(400).json({ success: false, message: 'Failed to delete flashcard' })
+    }
+  }
+  public async update({ params, request, response }: HttpContext) {
+    try {
+      const flashcard = await Flashcard.findOrFail(params.id)
+
+      flashcard.question = request.input('question')
+      flashcard.answer = request.input('answer')
+
+      await flashcard.save()
+
+      return response.json({ success: true, message: 'Flashcard updated successfully' }) // Send success response
+    } catch (error) {
+      return response.status(400).json({ success: false, message: 'Failed to update flashcard' }) // Send failure response
     }
   }
 }
