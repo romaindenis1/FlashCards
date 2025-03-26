@@ -13,7 +13,6 @@ import { middleware } from './kernel.js'
 import Section from '#models/deck'
 import DecksController from '#controllers/deck_controller'
 import FlashcardsController from '#controllers/flashcard_controller'
-console.log('✅ AuthController imported in routes.ts')
 
 router
   .get('/register', async ({ view }) => {
@@ -26,7 +25,6 @@ router
   .get('/', async ({ view }) => {
     // Fetch all sections and preload their teachers
     const sections = await Section.query().preload('flashcards').exec()
-    console.log('AuthController:', AuthController)
     // Render the homepage view and pass sections to it
     return view.render('pages/home', { sections })
   })
