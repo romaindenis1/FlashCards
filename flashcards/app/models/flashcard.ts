@@ -19,6 +19,9 @@ export default class Flashcard extends BaseModel {
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
 
+  @column()
+  declare validated: boolean
+
   @belongsTo(() => Deck)
   declare deck: BelongsTo<typeof Deck> // Establish the relationship to the Deck
 }

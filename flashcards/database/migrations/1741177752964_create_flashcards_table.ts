@@ -11,7 +11,7 @@ export default class Flashcards extends BaseSchema {
       table.string('question').notNullable() // The question on the flashcard
       table.string('answer').notNullable() // The answer on the flashcard
       table.integer('deck_id').unsigned().references('id').inTable('decks').onDelete('CASCADE') // Deck reference
-
+      table.boolean('validated').defaultTo(false)
       table.timestamp('created_at', { useTz: true }).defaultTo(this.now()) // Created timestamp
     })
   }
