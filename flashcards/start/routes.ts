@@ -17,7 +17,6 @@ console.log('✅ AuthController imported in routes.ts')
 
 router
   .get('/register', async ({ view }) => {
-    console.log('🔹 Route /register hit')
     return view.render('partials/register')
   })
   .as('auth.handleRegisterView')
