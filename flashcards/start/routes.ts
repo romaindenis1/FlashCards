@@ -61,6 +61,9 @@ router
   .use(middleware.auth())
 
 //changement
+// Flashcard routes
+router.get('/decks/:deckId/flashcards', [FlashcardsController, 'index']).as('flashcards.index')
+
 // Create Flashcard
 router.post('/decks/:deckId/flashcards', [FlashcardsController, 'create']).as('flashcards.store')
 
