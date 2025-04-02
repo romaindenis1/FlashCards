@@ -10,12 +10,30 @@ export default class FlashcardsController {
     return view.render('flashcards/create', { deck }) // Render the flashcard creation page and pass the deck data
   }
 
-  // This method will handle the actual creation of a flashcard (form submission)
-  public async create({ request, response, params }: HttpContext) {
+  public async create({ request, response, params, session }: HttpContext) {
     const { question, answer } = request.only(['question', 'answer'])
     const deck = await Deck.findOrFail(params.deckId) // Find the deck by ID
+    console.log('sadsadsadsa ID:', deck.id) // Debugging statement
+    // Validate the question length
+    if (!question || question.length < 10) {
+      session.flash({ error: 'The question must be at least 10 characters long.' })
+      console.log('Flash message set:', session.flashMessages.all()) // Debugging statement
+      return response.redirect().back()
+    }
 
-    // Create the flashcard
+    // Check if a flashcard with the same question already exists in this deck
+    const existingFlashcard = await Flashcard.query()
+      .where('question', question)
+      .andWhere('deckId', deck.id) // Ensure it's in the correct deck
+      .first()
+
+    if (existingFlashcard) {
+      session.flash({ error: 'A flashcard with the same question already exists in this deck.' })
+      console.log('Flash message set:', session.flashMessages.all()) // Debugging statement
+      return response.redirect().back()
+    }
+
+    // Create the flashcard if no duplicate is found
     const flashcard = await Flashcard.create({
       question,
       answer,
@@ -29,26 +47,37 @@ export default class FlashcardsController {
   // This method will handle displaying all the flashcards for a specific deck
   public async show({ params, view }: HttpContext) {
     const { deckId, id } = params
+
     // Find the deck by deckId
     const deck = await Deck.findOrFail(deckId)
+
     // Find the flashcard by id
     const flashcard = await Flashcard.findOrFail(id)
 
     // Return the flashcard data to the view
     return view.render('flashcards/show', { deck, flashcard })
   }
-  public async validateFlashcard({ params, response }: HttpContext) {
-    const flashcard = await Flashcard.findOrFail(params.id)
-    flashcard.validated = true // Assuming you have a 'validated' boolean field
-    await flashcard.save()
-
-    return response.redirect().toRoute('decks.show', { id: params.deckId })
-  }
+  // Edit Flashcard
   public async edit({ params, view }: HttpContext) {
     const flashcard = await Flashcard.query().where('id', params.id).firstOrFail()
     const deckId = params.deckId
     return view.render('flashcards/edit', { flashcard, deckId })
   }
+  public async update({ params, request, response }: HttpContext) {
+    try {
+      const flashcard = await Flashcard.findOrFail(params.id)
+
+      flashcard.question = request.input('question')
+      flashcard.answer = request.input('answer')
+
+      await flashcard.save()
+
+      return response.json({ success: true, message: 'Flashcard updated successfully' }) // Send success response
+    } catch (error) {
+      return response.status(400).json({ success: false, message: 'Failed to update flashcard' }) // Send failure response
+    }
+  }
+
   public async destroy({ params, response }: HttpContext) {
     try {
       const deckId = params.deckId
@@ -78,18 +107,12 @@ export default class FlashcardsController {
       return response.status(400).json({ success: false, message: 'Failed to delete flashcard' })
     }
   }
-  public async update({ params, request, response }: HttpContext) {
-    try {
-      const flashcard = await Flashcard.findOrFail(params.id)
 
-      flashcard.question = request.input('question')
-      flashcard.answer = request.input('answer')
+  public async validateFlashcard({ params, response }: HttpContext) {
+    const flashcard = await Flashcard.findOrFail(params.id)
+    flashcard.validated = true // Assuming you have a 'validated' boolean field
+    await flashcard.save()
 
-      await flashcard.save()
-
-      return response.json({ success: true, message: 'Flashcard updated successfully' }) // Send success response
-    } catch (error) {
-      return response.status(400).json({ success: false, message: 'Failed to update flashcard' }) // Send failure response
-    }
+    return response.redirect().toRoute('decks.show', { id: params.deckId })
   }
 }
