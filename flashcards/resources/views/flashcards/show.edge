@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-<html lang="fr">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -9,15 +8,54 @@
     </title>
     <link rel="stylesheet" href="/resources/css/deck.css" />
     <link rel="stylesheet" href="/resources/css/flashcard.css" />
+    <style>
+      .flashcard {
+        perspective: 1000px;
+        width: 300px;
+        height: 200px;
+        margin: auto;
+        cursor: pointer;
+      }
+      
+      .flashcard-inner {
+        width: 100%;
+        height: 100%;
+        text-align: center;
+        transition: transform 0.6s;
+        transform-style: preserve-3d;
+        position: relative;
+      }
+      
+      .flashcard.flipped .flashcard-inner {
+        transform: rotateY(180deg);
+      }
+      
+      .flashcard-front,
+      .flashcard-back {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        backface-visibility: hidden;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+      }
+      
+      .flashcard-front {
+        background: #f8f9fa;
+      }
+      
+      .flashcard-back {
+        transform: rotateY(180deg);
+      }
+    </style>
   </head>
   <body>
-
-    <!-- Header section (Include header partial) -->
     @include('partials/header')
-
-    <!-- Flashcard Detail Container -->
     <div class="container">
-      <!-- Flashcard Flip -->
       <div class="flashcard" onclick="this.classList.toggle('flipped')">
         <div class="flashcard-inner">
           <div class="flashcard-front">
@@ -34,45 +72,29 @@
           </div>
         </div>
       </div>
-
-      <!-- Action Buttons -->
       <div class="flashcard-actions">
-        <!-- Ok Button (Mark as Validated) -->
         <form action="{{ route('flashcards.validate', { deckId: deck.id, id: flashcard.id }) }}" method="POST">
           {{ csrfField() }}
           <button type="submit" class="action-button">Ok</button>
         </form>
-
-        <!-- Edit Button -->
         <a
           href="{{ route('flashcards.edit', { deckId: deck.id, id: flashcard.id }) }}"
           class="action-button"
         >Edit</a>
-
-        <!-- Delete Button -->
         <button
           class="action-button delete-flashcard-button"
           data-deck-id="{{ deck.id }}"
           data-flashcard-id="{{ flashcard.id }}"
         >Delete</button>
       </div>
-
-      <!-- Back Button to go back to Deck -->
       <a href="{{ route('decks.show', { id: deck.id }) }}" class="back-button">Back to Deck</a>
     </div>
-
-    <!-- Footer section (Include footer partial) -->
     @include('partials/footer')
-
-    <!-- JavaScript to handle delete -->
     <script>
       document.querySelector(".delete-flashcard-button").addEventListener("click", function() {
         const deckId = this.getAttribute("data-deck-id");
         const flashcardId = this.getAttribute("data-flashcard-id");
-        // Confirm with the user before deletion
-        const confirmation = confirm("Are you sure you want to delete this flashcard?");
-        if (confirmation) {
-          // Sending DELETE request via fetch API
+        if (confirm("Are you sure you want to delete this flashcard?")) {
           fetch(`/decks/${deckId}/flashcards/${flashcardId}`, {
             method: "DELETE",
             headers: {
@@ -81,9 +103,9 @@
             }
           }).then(response => {
             if (response.ok) {
-              window.location.href = `/decks/${deckId}`; // Redirect to the deck page
+              window.location.href = `/decks/${deckId}`;
             } else {
-              alert("Failed to delete the flashcard."); // Alert failure
+              alert("Failed to delete the flashcard.");
             }
           }).catch(error => {
             console.error("Error:", error);
@@ -92,6 +114,5 @@
         }
       });
     </script>
-
   </body>
 </html>
