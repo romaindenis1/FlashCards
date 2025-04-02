@@ -1,7 +1,3 @@
-# Creation date : 22.08.2022
-# Created by : CSR
-# Description : Create two containers (one for the db and the other one of the administration front-end)
-# 
 version: '3.3'
 
 services:
@@ -12,12 +8,30 @@ services:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_USER: db_user
       MYSQL_PASSWORD: db_user_pass
-    restart: always
     ports:
       - "6033:3306"
     volumes:
       - dbdata:/var/lib/mysql
       - ./scripts:/scripts
+
+  adonis_app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: adonis_app
+    environment:
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_USER: root
+      DB_PASSWORD: root
+      DB_DATABASE: flashcards
+    depends_on:
+      - db
+    ports:
+      - "3333:3333"
+    volumes:
+      - .:/app
+
   phpmyadmin:
     image: phpmyadmin:5.2.0
     container_name: pma
@@ -27,11 +41,8 @@ services:
       PMA_HOST: db
       PMA_PORT: 3306
       PMA_ARBITRARY: 1
-    restart: always
     ports:
       - 8081:80
 
-# The database will be persistent among containers restarts.
 volumes:
   dbdata:
-  
